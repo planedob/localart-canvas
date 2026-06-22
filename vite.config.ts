@@ -1,5 +1,4 @@
 import { fileURLToPath } from 'url'
-import { cloudflare } from '@cloudflare/vite-plugin'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { zodLocalePlugin } from './scripts/vite-zod-locale-plugin.js'
@@ -9,8 +8,12 @@ export default defineConfig(() => {
 	return {
 		plugins: [
 			zodLocalePlugin(fileURLToPath(new URL('./scripts/zod-locales-shim.js', import.meta.url))),
-			cloudflare(),
 			react(),
 		],
+		server: {
+			proxy: {
+				'/api': 'http://127.0.0.1:3001',
+			},
+		},
 	}
 })

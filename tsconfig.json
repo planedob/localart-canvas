@@ -41,10 +41,12 @@
 	],
 	"include": [
 		"client",
+		"server",
 		"shared",
 		"worker"
 	],
 	"files": [
-		"./vite.config.ts"
+		"./vite.config.ts",
+		"./vitest.config.ts"
 	]
 }
