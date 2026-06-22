@@ -11,7 +11,7 @@ describe('OpenAICompatibleBackend', () => {
 		)
 		const backend = new OpenAICompatibleBackend({
 			baseUrl: 'https://gateway.test/v1',
-			apiKey: 'test-api-key',
+			apiKey: 'fake',
 			model: 'vision-model',
 			timeoutMs: 5_000,
 			fetchImplementation,
@@ -27,8 +27,8 @@ describe('OpenAICompatibleBackend', () => {
 
 		const [url, options] = fetchImplementation.mock.calls[0]
 		expect(url).toBe('https://gateway.test/v1/chat/completions')
-		expect(url).not.toContain('test-api-key')
-		expect(options.headers.Authorization).toBe('Bearer test-api-key')
+		expect(url).not.toContain('fake')
+		expect(options.headers.Authorization).toBe('Bearer fake')
 		const body = JSON.parse(options.body)
 		expect(body).toMatchObject({ model: 'vision-model', stream: false })
 		expect(body.messages[0].content).toEqual([
