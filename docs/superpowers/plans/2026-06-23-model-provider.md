@@ -138,7 +138,7 @@ git commit -m "feat: persist sanitized model routing config"
 - Create: `server/model/OllamaChatBackend.test.ts`
 - Modify: `server/ollama/OllamaClient.ts`
 
-- [ ] **Step 1: Write failing provider tests**
+- [x] **Step 1: Write failing provider tests**
 
 ```ts
 await backend.chat({ message: 'Revise', selectedShapes: [], screenshotDataUrl: 'data:image/jpeg;base64,abc' })
@@ -150,25 +150,25 @@ expect(classifyHttpError(429, { error: { message: 'slow down' } }).kind).toBe('r
 expect(classifyHttpError(401, {}).retryable).toBe(false)
 ```
 
-- [ ] **Step 2: Run focused tests and verify failure**
+- [x] **Step 2: Run focused tests and verify failure**
 
 Run: `npx vitest run server/model/ProviderError.test.ts server/model/OpenAICompatibleBackend.test.ts server/model/OllamaChatBackend.test.ts`
 
 Expected: FAIL because the provider modules do not exist.
 
-- [ ] **Step 3: Implement the provider boundary**
+- [x] **Step 3: Implement the provider boundary**
 
 Implement `ProviderError` with the approved kinds and a `retryable` boolean. `OpenAICompatibleBackend` sends Bearer auth to `${baseUrl}/chat/completions`, uses `AbortSignal.timeout`, maps network/timeout/status/malformed response errors, and returns `{ message, model }`. `OllamaChatBackend` wraps or refactors the current `OllamaClient`, preserving model discovery and best-effort unload after success.
 
 Use a single helper to build selected-shape text and OpenAI `image_url` content so both backends produce equivalent prompts.
 
-- [ ] **Step 4: Run provider and legacy tests**
+- [x] **Step 4: Run provider and legacy tests**
 
 Run: `npx vitest run server/model server/ollama/OllamaClient.test.ts`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add server/model/ProviderError.ts server/model/ProviderError.test.ts server/model/OpenAICompatibleBackend.ts server/model/OpenAICompatibleBackend.test.ts server/model/OllamaChatBackend.ts server/model/OllamaChatBackend.test.ts server/ollama/OllamaClient.ts

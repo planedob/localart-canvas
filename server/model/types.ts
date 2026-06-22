@@ -46,3 +46,18 @@ export interface RoutingConfigUpdate {
 	config: RoutingConfig
 	secretUpdates: Record<ModelSlotName, SecretUpdate>
 }
+
+export interface ChatRequest {
+	message: string
+	selectedShapes: unknown[]
+	screenshotDataUrl?: string
+}
+
+export interface ChatResult {
+	message: string
+	model: string
+}
+
+export interface ChatBackend {
+	chat(request: ChatRequest): Promise<ChatResult>
+}
