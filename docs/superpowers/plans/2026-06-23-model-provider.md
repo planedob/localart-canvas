@@ -181,7 +181,7 @@ git commit -m "feat: add unified chat provider backends"
 - Create: `server/model/ChatRouter.ts`
 - Create: `server/model/ChatRouter.test.ts`
 
-- [ ] **Step 1: Write the failing fallback matrix**
+- [x] **Step 1: Write the failing fallback matrix**
 
 ```ts
 it.each(['network', 'timeout', 'rate_limit', 'server'] as const)('falls back for %s', async (kind) => {
@@ -195,23 +195,23 @@ it.each(['auth', 'invalid_request', 'model_not_found', 'policy', 'config'] as co
 })
 ```
 
-- [ ] **Step 2: Run the router tests and verify failure**
+- [x] **Step 2: Run the router tests and verify failure**
 
 Run: `npx vitest run server/model/ChatRouter.test.ts`
 
 Expected: FAIL because `ChatRouter` does not exist.
 
-- [ ] **Step 3: Implement one-attempt routing**
+- [x] **Step 3: Implement one-attempt routing**
 
 `ChatRouter.chat` invokes Primary once, returns route metadata on success, and invokes Backup once only when the thrown `ProviderError.retryable` is true and Backup exists. Unknown errors become non-retryable safe provider errors. A dual failure includes sanitized Primary and Backup summaries without request data.
 
-- [ ] **Step 4: Run router tests**
+- [x] **Step 4: Run router tests**
 
 Run: `npx vitest run server/model/ChatRouter.test.ts`
 
 Expected: PASS and each backend call count is at most one.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add server/model/ChatRouter.ts server/model/ChatRouter.test.ts

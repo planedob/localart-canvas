@@ -61,3 +61,10 @@ export interface ChatResult {
 export interface ChatBackend {
 	chat(request: ChatRequest): Promise<ChatResult>
 }
+
+export interface RoutedChatResponse extends ChatResult {
+	slot: ModelSlotName
+	provider: ModelProvider
+	preset: ModelPreset
+	fallback?: { from: 'primary'; reason: string }
+}
