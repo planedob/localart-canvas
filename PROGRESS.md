@@ -159,6 +159,9 @@ npm run dev
 - 停止并重新启动前后端后，Primary Ollama、Backup AIBuff、Base URL、模型和超时设置恢复成功。
 - 选中现有画布对象后发送 `Reply with exactly LOCAL_ROUTING_OK`，真实 Ollama 返回 `LOCAL_ROUTING_OK`，聊天面板显示 `Primary · Ollama · gemma3:4b`。
 - 浏览器控制台无应用 error；仅有已知 tldraw zh-CN locale 缺少两个 key 的 warning。
+- fallback 实机演练：Primary 通过环境变量指向临时本地 OpenAI-compatible 端点并返回 `503 PRIMARY_MOCK_503`，Backup 指向真实 Ollama `gemma3:4b`。
+- fallback 请求成功返回 `FALLBACK_ROUTING_OK`，面板显示 `Backup · Ollama · gemma3:4b` 与 `Fallback: PRIMARY_MOCK_503`；环境变量覆盖字段全部只读显示。
+- 演练结束后临时 503 服务、Vite 和 Express 均已停止，保存的用户配置未被环境变量测试覆盖。
 
 Electron 开发态实测（2026-06-23）：
 
