@@ -1,9 +1,11 @@
+import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { createRuntimeConfig } from './config'
 
 describe('createRuntimeConfig', () => {
 	it('uses local-first defaults', () => {
-		const config = createRuntimeConfig({}, '/workspace/localart-canvas')
+		const projectDirectory = path.resolve('/workspace/localart-canvas')
+		const config = createRuntimeConfig({}, projectDirectory)
 
 		expect(config).toEqual({
 			host: '127.0.0.1',
@@ -11,13 +13,14 @@ describe('createRuntimeConfig', () => {
 			ollamaBaseUrl: 'http://127.0.0.1:11434',
 			ollamaModel: null,
 			comfyuiBaseUrl: 'http://127.0.0.1:8188',
-			comfyuiWorkflowPath: '/workspace/localart-canvas/config/comfyui-workflow.json',
+			comfyuiWorkflowPath: path.join(projectDirectory, 'config/comfyui-workflow.json'),
 			comfyuiPromptNodeId: '4',
-			canvasDirectory: '/workspace/localart-canvas/canvas',
+			canvasDirectory: path.join(projectDirectory, 'canvas'),
 		})
 	})
 
 	it('accepts explicit environment overrides', () => {
+		const projectDirectory = path.resolve('/workspace/localart-canvas')
 		const config = createRuntimeConfig(
 			{
 				LOCALART_HOST: '0.0.0.0',
@@ -29,7 +32,7 @@ describe('createRuntimeConfig', () => {
 				COMFYUI_PROMPT_NODE_ID: '42',
 				LOCALART_CANVAS_DIR: './tmp/canvas',
 			},
-			'/workspace/localart-canvas'
+			projectDirectory
 		)
 
 		expect(config).toEqual({
@@ -38,9 +41,9 @@ describe('createRuntimeConfig', () => {
 			ollamaBaseUrl: 'http://ollama.test:11434',
 			ollamaModel: 'qwen3:4b',
 			comfyuiBaseUrl: 'http://comfy.test:8188',
-			comfyuiWorkflowPath: '/workspace/localart-canvas/fixtures/workflow.json',
+			comfyuiWorkflowPath: path.join(projectDirectory, 'fixtures/workflow.json'),
 			comfyuiPromptNodeId: '42',
-			canvasDirectory: '/workspace/localart-canvas/tmp/canvas',
+			canvasDirectory: path.join(projectDirectory, 'tmp/canvas'),
 		})
 	})
 
