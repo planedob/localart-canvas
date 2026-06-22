@@ -96,6 +96,8 @@ npm run dev
 
 状态：完成。
 
+验收交接、录屏步骤与第 11 节逐项自检见 `docs/M2S1-验收交接.md`。当前硬闸口状态为等待 Claude 验收；通过前不进入模型接入编码。
+
 已完成：
 
 - Electron 主进程使用 `utilityProcess.fork` 运行 Express 服务，服务固定监听 `127.0.0.1` 并由系统分配动态端口。

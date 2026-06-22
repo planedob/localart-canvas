@@ -119,3 +119,4 @@ tldraw SDK 可在开发环境使用；生产部署需要有效的 trial、commer
 - [`LocalArt-Canvas-Codex开发任务书.md`](LocalArt-Canvas-Codex开发任务书.md)：唯一产品与验收总纲
 - [`PROGRESS.md`](PROGRESS.md)：里程碑进度和复现步骤
 - [`docs/notes.md`](docs/notes.md)：M0 调研记录
+- [`docs/M2S1-验收交接.md`](docs/M2S1-验收交接.md)：Electron 壳验收清单、录屏步骤与 CI 证据
