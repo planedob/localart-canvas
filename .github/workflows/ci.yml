@@ -1,7 +1,9 @@
 name: CI
 on:
+  push:
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -10,7 +12,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      # 按你项目实际命令调整下面三行
-      - run: npm ci || npm install
-      - run: npm run lint --if-present
-      - run: npm test --if-present
+          cache: npm
+      - run: npm ci
+      - run: npm run build

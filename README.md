@@ -1,49 +1,49 @@
-# LocalArt Canvas — 三 Agent 联合开发（本地文档包）
+# LocalArt Canvas
 
-这是一个**本地文件夹**，里面是项目骨架 + 三个 AI 的工作安排与职责。
-流程是：**本地准备好文档 → Codex 把它建成 GitHub 仓库 → 三个 AI 按本地文档开发 → 进度随时存进仓库。**
+LocalArt Canvas 是本地优先的 AI 视觉工作台。当前仓库以官方 tldraw Agent Starter Kit 为基础，目标是实现“在画布上标注 → 调用 Ollama 与 ComfyUI → 把修订图放到原图旁”的本地闭环。
 
-## 执行顺序（重要）
+## 当前状态
 
-**第 0 步｜Codex 建仓库**：把本文件夹交给已连 GitHub 的 Codex，让它执行 `00_START_给Codex.md`。
-它会 `git init` → `gh repo create` 推上 GitHub → 跑 `bootstrap.sh` 建好 labels/看板/起步 issue。
-**这一步之前没有仓库，所以必须先做这步**，否则其它 AI 无处读写进度。
+M0 基线已建立：画布与 Agent 面板可在本地启动，代码钩子和本地 API 调研见 [`docs/notes.md`](docs/notes.md)，进度和手测记录见 [`PROGRESS.md`](PROGRESS.md)。
 
-**第 1 步｜各 AI 开工**：仓库建好后，在仓库克隆目录里启动三个 AI，各读自己的本地角色文档干活：
+## 环境要求
 
-| 文档 | 给谁 | 职责 |
-|---|---|---|
-| `00_START_给Codex.md` | Codex（第 0 步用） | 建仓库 + 推文件 + 初始化 |
-| `AGENTS.md` | **Codex** | 主力开发：按 issue 实现、写测试、开 PR |
-| `CLAUDE.md` | **Claude Code** | 规划 + 验收：拆任务、定接口、审 PR、决定合并 |
-| `GEMINI.md` | **Gemini** | 侦察 + 文档：读代码库/查 API、写文档 |
-| `COORDINATION.md` | 三个都读 | 协作规则、接力流程、Goal 模式、权限红线 |
-| `PRODUCT_SPEC.md` | Claude 读 | 里程碑，Claude 据此拆 issue |
-| `bootstrap.sh` | 第 0 步跑一次 | 建 labels / 看板 / 起步 issue / safe-start tag / main 保护 |
-| `.github/workflows/ci.yml` | GitHub 自动 | PR 的 lint+test 闸口 |
-| `scripts/run-*.sh` | 第 1 步启动 | 各 AI 的 Goal 循环 runner |
+- Node.js 20 或更高版本
+- npm
+- M1 本地 AI 功能需要：
+  - Ollama，默认地址 `http://127.0.0.1:11434`
+  - ComfyUI，默认地址 `http://127.0.0.1:8188`
 
-## 各 AI 怎么「看仓库」并干活
+## 安装与启动
 
-两部分：①在仓库**本地克隆目录里启动**，自动读到自己的 `*.md`（角色+规则）和代码；
-②通过已认证的 `gh` 读 GitHub 上的 **issues / PR / 看板**，知道现在到哪步、该干什么。
-干完用 `git push` + `gh` 写回。**进度始终保存在 GitHub 仓库里**，跨设备/跨 AI 都能接上。
-
-## 前提（每台跑 AI 的机器各一次）
-- 装好 CLI：Codex CLI / Claude Code / Gemini CLI。
-- `gh auth login` 用同一 GitHub 账号认证（三个 AI 读写 GitHub 的通道）。
-- 第 0 步建好仓库后，其它机器 `git clone` 下来再启动 AI。
-
-## 启动各 AI（第 1 步之后）
-在仓库目录里各开一个终端：
 ```bash
-bash scripts/run-gemini.sh     # 侦察
-bash scripts/run-claude.sh     # 拆卡 + 验收
-bash scripts/run-codex.sh      # 主力实现
+npm ci
+npm run dev -- --host 127.0.0.1
 ```
-它们各自进 LOOP：`git pull` → 取本阶段 issue → 干 → 改 label 交棒 → `commit/push`，跑到额度耗尽后自动退避、等窗口重置再续。
-（runner 里各 CLI 的启动 flag 以 `--help` 当前版本为准，可能需微调；CI 里的 lint/test 命令等项目骨架建好后改成实际命令。）
 
-## 安全网
-- Gitea 镜像保持开启 = 离线备份；`safe-start` tag = 回滚点（`git reset --hard safe-start`）。
-- agent 永不自动做：改设置/保护/权限、force-push、删分支/历史、动 secrets（见 `COORDINATION.md` 第 4 节）。
+浏览器打开 <http://127.0.0.1:5173/>。
+
+生产构建：
+
+```bash
+npm run build
+```
+
+## M0 手测
+
+1. 打开本地页面，确认画布和右侧 Agent 面板出现。
+2. 点击矩形工具，在画布拖出矩形。
+3. 用选择工具拖动矩形。
+4. 点击顶部删除按钮，确认矩形消失。
+
+当前模板的云端模型请求仍依赖 Cloudflare Worker 和 Anthropic/OpenAI/Google 密钥；M1 将其替换为本地服务与 Ollama，并加入 ComfyUI 图像生成。
+
+## tldraw 许可证
+
+tldraw SDK 可在开发环境使用；生产部署需要有效的 trial、commercial 或 hobby license key。水印显示由许可证类型控制。本项目不会通过 CSS 或修改 SDK 绕过许可证机制。
+
+## 文档
+
+- [`LocalArt-Canvas-Codex开发任务书.md`](LocalArt-Canvas-Codex开发任务书.md)：唯一产品与验收总纲
+- [`PROGRESS.md`](PROGRESS.md)：里程碑进度和复现步骤
+- [`docs/notes.md`](docs/notes.md)：M0 调研记录

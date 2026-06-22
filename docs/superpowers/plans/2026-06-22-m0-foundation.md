@@ -16,42 +16,42 @@
 - Create: `client/**`, `shared/**`, `worker/**`, `package.json`, `package-lock.json`, `vite.config.ts`, `wrangler.toml`
 - Preserve: `AGENTS.md`, `LocalArt-Canvas-Codex开发任务书.md`, `docs/**`
 
-- [ ] Copy the official `tldraw/agent-template` working tree without its `.git` directory.
-- [ ] Change package metadata to LocalArt Canvas without changing runtime behavior.
-- [ ] Install locked dependencies with `npm install`.
-- [ ] Commit with `chore: adopt tldraw agent starter`.
+- [x] Copy the official `tldraw/agent-template` working tree without its `.git` directory.
+- [x] Change package metadata to LocalArt Canvas without changing runtime behavior.
+- [x] Install locked dependencies with `npm install`.
+- [x] Commit with `chore: adopt tldraw agent starter`.
 
 ### Task 2: Verify the official baseline
 
 **Files:**
 - Modify: `PROGRESS.md`
 
-- [ ] Run `npm run build`; expect exit code 0.
-- [ ] Run `npm run dev` and open the reported local URL.
-- [ ] Create, select, move, and delete a canvas shape.
-- [ ] Record the exact commands and observed result in `PROGRESS.md`.
+- [x] Run `npm run build`; expect exit code 0.
+- [x] Run `npm run dev` and open the reported local URL.
+- [x] Create, select, move, and delete a canvas shape.
+- [x] Record the exact commands and observed result in `PROGRESS.md`.
 
 ### Task 3: Map M1 integration points
 
 **Files:**
 - Create: `docs/notes.md`
 
-- [ ] Identify custom shape registration and editor UI composition points.
-- [ ] Identify prompt parts for selected shapes and screenshots.
-- [ ] Identify action registration and execution points.
-- [ ] Identify all Cloudflare and hosted-model dependencies.
-- [ ] Identify tldraw license/watermark behavior without bypassing license terms.
-- [ ] Document ComfyUI `/prompt`, `/history/{prompt_id}`, `/view`, WebSocket status, API workflow format, and validation errors.
-- [ ] Document Ollama `http://localhost:11434/v1/chat/completions`, model selection, streaming, and local error handling.
+- [x] Identify custom shape registration and editor UI composition points.
+- [x] Identify prompt parts for selected shapes and screenshots.
+- [x] Identify action registration and execution points.
+- [x] Identify all Cloudflare and hosted-model dependencies.
+- [x] Identify tldraw license/watermark behavior without bypassing license terms.
+- [x] Document ComfyUI `/prompt`, `/history/{prompt_id}`, `/view`, WebSocket status, API workflow format, and validation errors.
+- [x] Document Ollama `http://localhost:11434/v1/chat/completions`, model selection, streaming, and local error handling.
 
 ### Task 4: Make the repository reproducible
 
 **Files:**
 - Modify: `README.md`, `.github/workflows/ci.yml`, `PROGRESS.md`
 
-- [ ] Replace obsolete multi-Agent instructions with install, dev, build, and M0 notes.
-- [ ] Update CI to run the actual install and build commands.
-- [ ] Run `npm ci` followed by `npm run build`; expect both to exit 0.
-- [ ] Verify the documented browser interaction again.
+- [x] Replace obsolete multi-Agent instructions with install, dev, build, and M0 notes.
+- [x] Update CI to run the actual install and build commands.
+- [x] Run `npm ci` followed by `npm run build`; expect both to exit 0.
+- [x] Verify the documented browser interaction again.
 - [ ] Commit with `docs: document m0 baseline`.
 - [ ] Push `main`, create and push `m0-done`.
