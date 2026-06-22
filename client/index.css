@@ -127,6 +127,7 @@ body {
 .model-routing-save { width: 100%; background: #2563eb !important; }
 .model-routing-message { color: #86efac; }
 .model-routing-error { color: #fca5a5; }
+.local-chat-fallback { display: block; color: #fbbf24 !important; }
 
 /* Chat Panel */
 

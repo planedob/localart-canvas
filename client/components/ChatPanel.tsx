@@ -12,6 +12,27 @@ interface ChatEntry {
 	role: 'user' | 'assistant' | 'error'
 	text: string
 	model?: string
+	slot?: 'primary' | 'backup'
+	preset?: 'ollama' | 'aibuff' | 'openai' | 'custom'
+	fallbackReason?: string
+}
+
+const PRESET_LABELS = { ollama: 'Ollama', aibuff: 'AIBuff', openai: 'OpenAI', custom: 'Custom' } as const
+
+export function ChatEntryView({ entry }: { entry: ChatEntry }) {
+	const route = entry.model && entry.slot && entry.preset
+		? `${entry.slot === 'primary' ? 'Primary' : 'Backup'} · ${PRESET_LABELS[entry.preset]} · ${entry.model}`
+		: entry.model
+	return <div className={`local-chat-entry ${entry.role}`}>
+		<span>{entry.role === 'user' ? 'You' : entry.role === 'error' ? 'Error' : 'Agent'}</span>
+		<p>{entry.text}</p>
+		{route ? <small>{route}</small> : null}
+		{entry.fallbackReason ? <small className="local-chat-fallback">Fallback: {entry.fallbackReason}</small> : null}
+	</div>
+}
+
+export function ChatSubmitLabel({ isSending }: { isSending: boolean }) {
+	return <>{isSending ? 'Thinking…' : 'Send to model'}</>
 }
 
 export function ChatPanel({ editor }: { editor: Editor }) {
@@ -53,7 +74,14 @@ export function ChatPanel({ editor }: { editor: Editor }) {
 			setRevisionPrompt(response.message)
 			setEntries((current) => [
 				...current,
-				{ role: 'assistant', text: response.message, model: response.model },
+				{
+					role: 'assistant',
+					text: response.message,
+					model: response.model,
+					slot: response.slot,
+					preset: response.preset,
+					fallbackReason: response.fallback?.reason,
+				},
 			])
 		} catch (error) {
 			setEntries((current) => [
@@ -126,7 +154,7 @@ export function ChatPanel({ editor }: { editor: Editor }) {
 			<header className="local-chat-header">
 				<div>
 					<strong>LocalArt Agent</strong>
-					<span>Ollama · local</span>
+					<span>Primary → Backup</span>
 				</div>
 				<div className="local-chat-header-actions">
 					<button type="button" onClick={addPlaceholder}>
@@ -144,13 +172,7 @@ export function ChatPanel({ editor }: { editor: Editor }) {
 						Select canvas shapes, then describe the revision you want.
 					</p>
 				) : (
-					entries.map((entry, index) => (
-						<div className={`local-chat-entry ${entry.role}`} key={`${entry.role}-${index}`}>
-							<span>{entry.role === 'user' ? 'You' : entry.role === 'error' ? 'Error' : 'Agent'}</span>
-							<p>{entry.text}</p>
-							{entry.model && <small>{entry.model}</small>}
-						</div>
-					))
+					entries.map((entry, index) => <ChatEntryView entry={entry} key={`${entry.role}-${index}`} />)
 				)}
 			</div>
 
@@ -165,7 +187,7 @@ export function ChatPanel({ editor }: { editor: Editor }) {
 					onChange={(event) => setInput(event.currentTarget.value)}
 				/>
 				<button disabled={!input.trim() || isSending}>
-					{isSending ? 'Thinking…' : 'Send to Ollama'}
+					<ChatSubmitLabel isSending={isSending} />
 				</button>
 				<button
 					className="local-generate-button"

@@ -1,4 +1,5 @@
-import type { LocalChatRequest, LocalChatResponse } from '../server/ollama/OllamaClient'
+import type { LocalChatRequest } from '../server/ollama/OllamaClient'
+import type { RoutedChatResponse } from '../server/model/types'
 
 interface ApiErrorBody {
 	error?: string
@@ -13,19 +14,19 @@ export interface GenerationResponse {
 export async function requestLocalChat(
 	request: LocalChatRequest,
 	fetchImplementation: typeof fetch = fetch
-): Promise<LocalChatResponse> {
+): Promise<RoutedChatResponse> {
 	const response = await fetchImplementation('/api/chat', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(request),
 	})
-	const body = (await response.json()) as LocalChatResponse | ApiErrorBody
+	const body = (await response.json()) as RoutedChatResponse | ApiErrorBody
 
 	if (!response.ok) {
 		throw new Error('error' in body && body.error ? body.error : `Local chat failed (${response.status})`)
 	}
 
-	return body as LocalChatResponse
+	return body as RoutedChatResponse
 }
 
 export async function requestGeneration(

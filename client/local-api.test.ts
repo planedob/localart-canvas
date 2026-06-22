@@ -8,6 +8,10 @@ describe('requestLocalChat', () => {
 				JSON.stringify({
 					message: 'Use a softer shadow.',
 					model: 'qwen3:4b',
+					slot: 'backup',
+					provider: 'openai-compatible',
+					preset: 'aibuff',
+					fallback: { from: 'primary', reason: 'Primary timed out' },
 				}),
 				{ status: 200, headers: { 'Content-Type': 'application/json' } }
 			)
@@ -21,9 +25,13 @@ describe('requestLocalChat', () => {
 			fetchImplementation
 		)
 
-		expect(result).toEqual({
+			expect(result).toEqual({
 			message: 'Use a softer shadow.',
 			model: 'qwen3:4b',
+			slot: 'backup',
+			provider: 'openai-compatible',
+			preset: 'aibuff',
+			fallback: { from: 'primary', reason: 'Primary timed out' },
 		})
 		expect(fetchImplementation).toHaveBeenCalledWith('/api/chat', expect.objectContaining({
 			method: 'POST',

@@ -325,7 +325,7 @@ git commit -m "feat: add model routing sidebar editor"
 - Create: `client/components/ChatPanel.test.tsx`
 - Modify: `client/index.css`
 
-- [ ] **Step 1: Write failing provenance tests**
+- [x] **Step 1: Write failing provenance tests**
 
 ```ts
 expect(await requestLocalChat(request, fetchMock)).toMatchObject({
@@ -340,23 +340,23 @@ expect(markup).toContain('Primary timed out')
 expect(renderToStaticMarkup(<ChatSubmitLabel isSending={false} />)).toContain('Send to model')
 ```
 
-- [ ] **Step 2: Run focused tests and verify old Ollama labels fail**
+- [x] **Step 2: Run focused tests and verify old Ollama labels fail**
 
 Run: `npx vitest run client/local-api.test.ts client/components/ChatPanel.test.tsx`
 
 Expected: FAIL because route metadata is not rendered and the button still says `Send to Ollama`.
 
-- [ ] **Step 3: Implement route feedback**
+- [x] **Step 3: Implement route feedback**
 
 Use routed response types from `server/model/types.ts`. Store route metadata on assistant entries, display `Primary/Backup · preset · model`, show a short fallback reason, change the header subtitle to `Primary → Backup`, and rename the action to `Send to model`. Preserve revision prompt assignment and `Generate revision` behavior.
 
-- [ ] **Step 4: Run client and M1 regression tests**
+- [x] **Step 4: Run client and M1 regression tests**
 
 Run: `npx vitest run client`
 
 Expected: PASS, including canvas placement and persistence tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add client/local-api.ts client/local-api.test.ts client/components/ChatPanel.tsx client/components/ChatPanel.test.tsx client/index.css
