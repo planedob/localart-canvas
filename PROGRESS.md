@@ -53,10 +53,13 @@ npm run dev -- --host 127.0.0.1
 - 浏览器实测：选中矩形后发送请求，面板显示 `PANEL_OK` 与模型名，无新增 console error。
 - `AIImageHolder` 自定义形状已注册到主画布和历史 viewer。
 - 浏览器实测：AI 图片占位形状可显示、移动和删除，无 console error。
+- 画布截图已随选中 shape 摘要发送给 Ollama；`gemma3:4b` 真实视觉请求返回 `VISION_OK`。
+- ComfyUI adapter 已覆盖 workflow prompt 注入、提交、历史轮询、结果下载、节点错误和超时。
+- 生成结果会保存到 `canvas/assets/`，面板会把返回的 `AIImageHolder` 放到源对象右侧。
+- `canvas/document.json` 自动保存已生效，当前 API 可读回包含 2 个 shape 的完整 snapshot。
 
 待完成：
 
-- 画布截图加入模型上下文。
-- ComfyUI workflow adapter 与生成按钮。
-- 标注到新图的端到端定位。
-- `./canvas/` 文件持久化。
+- 提供并验证本机 Flux.2 klein ComfyUI API workflow。
+- 用真实 ComfyUI 完成图片生成与落画布。
+- 浏览器重启后复验 `canvas/document.json` 自动恢复。

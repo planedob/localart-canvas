@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { requestLocalChat } from './local-api'
+import { requestGeneration, requestLocalChat } from './local-api'
 
 describe('requestLocalChat', () => {
 	it('returns the local chat response', async () => {
@@ -46,5 +46,27 @@ describe('requestLocalChat', () => {
 				fetchImplementation
 			)
 		).rejects.toThrow('No Ollama models are installed')
+	})
+})
+
+describe('requestGeneration', () => {
+	it('returns the generated local asset', async () => {
+		const fetchImplementation = vi.fn().mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					assetId: 'asset-1',
+					url: '/assets/asset-1.png',
+					promptId: 'prompt-1',
+				}),
+				{ status: 200, headers: { 'Content-Type': 'application/json' } }
+			)
+		)
+
+		const result = await requestGeneration('make it cinematic', fetchImplementation)
+
+		expect(result.url).toBe('/assets/asset-1.png')
+		expect(fetchImplementation).toHaveBeenCalledWith('/api/generations', expect.objectContaining({
+			method: 'POST',
+		}))
 	})
 })

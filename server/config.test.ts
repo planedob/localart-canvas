@@ -12,6 +12,7 @@ describe('createRuntimeConfig', () => {
 			ollamaModel: null,
 			comfyuiBaseUrl: 'http://127.0.0.1:8188',
 			comfyuiWorkflowPath: '/workspace/localart-canvas/config/comfyui-workflow.json',
+			comfyuiPromptNodeId: '6',
 			canvasDirectory: '/workspace/localart-canvas/canvas',
 		})
 	})
@@ -25,6 +26,7 @@ describe('createRuntimeConfig', () => {
 				OLLAMA_MODEL: 'qwen3:4b',
 				COMFYUI_BASE_URL: 'http://comfy.test:8188/',
 				COMFYUI_WORKFLOW_PATH: './fixtures/workflow.json',
+				COMFYUI_PROMPT_NODE_ID: '42',
 				LOCALART_CANVAS_DIR: './tmp/canvas',
 			},
 			'/workspace/localart-canvas'
@@ -37,6 +39,7 @@ describe('createRuntimeConfig', () => {
 			ollamaModel: 'qwen3:4b',
 			comfyuiBaseUrl: 'http://comfy.test:8188',
 			comfyuiWorkflowPath: '/workspace/localart-canvas/fixtures/workflow.json',
+			comfyuiPromptNodeId: '42',
 			canvasDirectory: '/workspace/localart-canvas/tmp/canvas',
 		})
 	})

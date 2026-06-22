@@ -400,6 +400,10 @@ body {
 	font-weight: 700;
 }
 
+.local-chat-form .local-generate-button {
+	background: #7c3aed;
+}
+
 .local-chat-form button:disabled {
 	cursor: not-allowed;
 	opacity: 0.45;

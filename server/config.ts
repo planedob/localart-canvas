@@ -7,6 +7,7 @@ export interface RuntimeConfig {
 	ollamaModel: string | null
 	comfyuiBaseUrl: string
 	comfyuiWorkflowPath: string
+	comfyuiPromptNodeId: string
 	canvasDirectory: string
 }
 
@@ -48,6 +49,7 @@ export function createRuntimeConfig(
 			projectDirectory,
 			environment.COMFYUI_WORKFLOW_PATH ?? 'config/comfyui-workflow.json'
 		),
+		comfyuiPromptNodeId: environment.COMFYUI_PROMPT_NODE_ID?.trim() || '6',
 		canvasDirectory: resolveFromProject(
 			projectDirectory,
 			environment.LOCALART_CANVAS_DIR ?? 'canvas'

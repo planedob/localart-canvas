@@ -100,4 +100,36 @@ describe('OllamaClient', () => {
 			'Ollama request failed (500): model runner crashed'
 		)
 	})
+
+	it('extracts OpenAI-compatible object error messages', async () => {
+		const fetchImplementation = vi
+			.fn()
+			.mockResolvedValueOnce(jsonResponse({ models: [{ name: 'gemma3:1b' }] }))
+			.mockResolvedValueOnce(
+				jsonResponse(
+					{
+						error: {
+							message: 'this model is missing data required for image input',
+							type: 'api_error',
+						},
+					},
+					500
+				)
+			)
+		const client = new OllamaClient({
+			baseUrl: 'http://ollama.test',
+			model: null,
+			fetchImplementation,
+		})
+
+		await expect(
+			client.chat({
+				message: 'Describe this',
+				selectedShapes: [],
+				screenshotDataUrl: 'data:image/png;base64,abc',
+			})
+		).rejects.toThrow(
+			'Ollama request failed (500): this model is missing data required for image input'
+		)
+	})
 })

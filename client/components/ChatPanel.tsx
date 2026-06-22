@@ -1,7 +1,7 @@
 import { FormEvent, useState } from 'react'
-import { createShapeId, useValue } from 'tldraw'
-import { requestLocalChat } from '../local-api'
-import { summarizeSelectedShapes } from '../revision-context'
+import { createShapeId, FileHelpers, useValue } from 'tldraw'
+import { requestGeneration, requestLocalChat } from '../local-api'
+import { getRevisionPlacement, summarizeSelectedShapes } from '../revision-context'
 import { useAgent } from '../agent/TldrawAgentAppProvider'
 import {
 	AI_IMAGE_HOLDER_DEFAULT_PROPS,
@@ -23,6 +23,8 @@ export function ChatPanel() {
 	const [input, setInput] = useState('')
 	const [entries, setEntries] = useState<ChatEntry[]>([])
 	const [isSending, setIsSending] = useState(false)
+	const [isGenerating, setIsGenerating] = useState(false)
+	const [revisionPrompt, setRevisionPrompt] = useState('')
 
 	async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault()
@@ -34,10 +36,23 @@ export function ChatPanel() {
 		setEntries((current) => [...current, { role: 'user', text: message }])
 
 		try {
+			const screenshotDataUrl =
+				selectedShapes.length > 0
+					? await editor
+							.toImage(selectedShapes, {
+								format: 'jpeg',
+								background: true,
+								padding: 16,
+								pixelRatio: 1,
+							})
+							.then((result) => FileHelpers.blobToDataUrl(result.blob))
+					: undefined
 			const response = await requestLocalChat({
 				message,
 				selectedShapes: summarizeSelectedShapes(selectedShapes),
+				...(screenshotDataUrl ? { screenshotDataUrl } : {}),
 			})
+			setRevisionPrompt(response.message)
 			setEntries((current) => [
 				...current,
 				{ role: 'assistant', text: response.message, model: response.model },
@@ -52,6 +67,43 @@ export function ChatPanel() {
 			])
 		} finally {
 			setIsSending(false)
+		}
+	}
+
+	async function generateRevision() {
+		if (!revisionPrompt || isGenerating) return
+		setIsGenerating(true)
+		try {
+			const generation = await requestGeneration(revisionPrompt)
+			const sourceBounds = editor.getSelectionPageBounds()
+			const placement = getRevisionPlacement(
+				sourceBounds,
+				AI_IMAGE_HOLDER_DEFAULT_PROPS,
+				editor.getViewportPageBounds()
+			)
+			const id = createShapeId()
+			editor.createShape<AIImageHolderShape>({
+				id,
+				type: AI_IMAGE_HOLDER_TYPE,
+				x: placement.x,
+				y: placement.y,
+				props: {
+					...AI_IMAGE_HOLDER_DEFAULT_PROPS,
+					assetUrl: generation.url,
+					prompt: revisionPrompt,
+				},
+			})
+			editor.select(id)
+		} catch (error) {
+			setEntries((current) => [
+				...current,
+				{
+					role: 'error',
+					text: error instanceof Error ? error.message : 'Image generation failed',
+				},
+			])
+		} finally {
+			setIsGenerating(false)
 		}
 	}
 
@@ -116,6 +168,14 @@ export function ChatPanel() {
 				/>
 				<button disabled={!input.trim() || isSending}>
 					{isSending ? 'Thinking…' : 'Send to Ollama'}
+				</button>
+				<button
+					className="local-generate-button"
+					disabled={!revisionPrompt || isGenerating}
+					onClick={generateRevision}
+					type="button"
+				>
+					{isGenerating ? 'Generating…' : 'Generate revision'}
 				</button>
 			</form>
 		</aside>

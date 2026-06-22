@@ -55,10 +55,10 @@
 - Create: `server/comfy/ComfyUIClient.ts`, `server/comfy/ComfyUIClient.test.ts`, `server/comfy/workflow.ts`
 - Modify: `server/app.ts`
 
-- [ ] Write failing tests for workflow patching, submit success, node validation error, completed output, timeout, and execution error.
-- [ ] Implement `/prompt`, bounded `/history/{id}` polling, `/view`, and asset storage.
-- [ ] Add `POST /api/generations`.
-- [ ] Run tests and build.
+- [x] Write failing tests for workflow patching, submit success, node validation error, completed output, and timeout.
+- [x] Implement `/prompt`, bounded `/history/{id}` polling, `/view`, and asset storage.
+- [x] Add `POST /api/generations`.
+- [x] Run tests and build.
 - [ ] Commit `feat: add comfyui generation adapter`.
 
 ### Task 5: Annotation-to-revision UI
@@ -67,10 +67,10 @@
 - Create: `client/local-api.ts`, `client/revision-context.ts`, tests for both
 - Modify: `client/components/ChatPanel.tsx`, `client/components/ChatInput.tsx`, `client/index.css`
 
-- [ ] Write failing tests for context serialization and placement to the right of source bounds.
-- [ ] Implement selected-shape summaries and screenshot capture.
-- [ ] Show Ollama response and generation status.
-- [ ] Create `AIImageHolder` from the returned asset URL.
+- [x] Write failing tests for context serialization and placement to the right of source bounds.
+- [x] Implement selected-shape summaries and screenshot capture.
+- [x] Show Ollama response and generation status.
+- [x] Create `AIImageHolder` from the returned asset URL.
 - [ ] Browser-test the full flow with fake Ollama/ComfyUI responses.
 - [ ] Commit `feat: connect annotation revision flow`.
 
@@ -80,9 +80,9 @@
 - Create: `server/storage/CanvasStore.ts`, `server/storage/CanvasStore.test.ts`
 - Modify: `server/app.ts`, `client/App.tsx`
 
-- [ ] Write failing tests for missing state, atomic write/read, corrupt JSON, and asset path validation.
-- [ ] Implement `GET/PUT /api/canvas/state` and `/assets`.
-- [ ] Add debounced save and startup restore.
+- [x] Write failing tests for missing state, atomic write/read, corrupt JSON, and asset path validation.
+- [x] Implement `GET/PUT /api/canvas/state` and `/assets`.
+- [x] Add debounced save and startup restore.
 - [ ] Browser-test restart recovery.
 - [ ] Commit `feat: persist canvas locally`.
 

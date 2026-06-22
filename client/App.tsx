@@ -14,6 +14,7 @@ import {
 } from './agent/TldrawAgentAppProvider'
 import { ChatPanel } from './components/ChatPanel'
 import { ChatPanelFallback } from './components/ChatPanelFallback'
+import { CanvasPersistence } from './components/CanvasPersistence'
 import { CustomHelperButtons } from './components/CustomHelperButtons'
 import { AgentViewportBoundsHighlights } from './components/highlights/AgentViewportBoundsHighlights'
 import { AllContextHighlights } from './components/highlights/ContextHighlights'
@@ -84,12 +85,12 @@ function App() {
 			<div className="tldraw-agent-container">
 				<div className="tldraw-canvas">
 					<Tldraw
-						persistenceKey="tldraw-agent-demo"
 						shapeUtils={[AIImageHolderShapeUtil]}
 						tools={tools}
 						overrides={overrides}
 						components={components}
 					>
+						<CanvasPersistence />
 						<TldrawAgentAppProvider onMount={setApp} onUnmount={handleUnmount} />
 					</Tldraw>
 				</div>

@@ -11,6 +11,7 @@ const config: RuntimeConfig = {
 	ollamaModel: null,
 	comfyuiBaseUrl: 'http://comfy.test',
 	comfyuiWorkflowPath: '/tmp/workflow.json',
+	comfyuiPromptNodeId: '6',
 	canvasDirectory: '/tmp/canvas',
 }
 
@@ -65,5 +66,50 @@ describe('POST /api/chat', () => {
 			message: 'Improve this image',
 			selectedShapes: [{ id: 'shape:1' }],
 		})
+	})
+})
+
+describe('POST /api/generations', () => {
+	it('returns a stored ComfyUI generation', async () => {
+		const generationService = {
+			generate: vi.fn(async () => ({
+				assetId: 'asset-1',
+				url: '/assets/asset-1.png',
+				promptId: 'prompt-1',
+			})),
+		}
+		const response = await request(
+			createApp(config, vi.fn(), { generationService })
+		)
+			.post('/api/generations')
+			.send({ prompt: 'make it cinematic' })
+
+		expect(response.status).toBe(200)
+		expect(response.body).toEqual({
+			assetId: 'asset-1',
+			url: '/assets/asset-1.png',
+			promptId: 'prompt-1',
+		})
+		expect(generationService.generate).toHaveBeenCalledWith('make it cinematic')
+	})
+})
+
+describe('canvas state API', () => {
+	it('reads and writes the local canvas document', async () => {
+		const canvasStore = {
+			read: vi.fn(async () => ({ store: { existing: true } })),
+			write: vi.fn(async () => undefined),
+		}
+		const app = createApp(config, vi.fn(), { canvasStore })
+
+		const readResponse = await request(app).get('/api/canvas/state')
+		const writeResponse = await request(app)
+			.put('/api/canvas/state')
+			.send({ store: { next: true } })
+
+		expect(readResponse.status).toBe(200)
+		expect(readResponse.body).toEqual({ document: { store: { existing: true } } })
+		expect(writeResponse.status).toBe(204)
+		expect(canvasStore.write).toHaveBeenCalledWith({ store: { next: true } })
 	})
 })

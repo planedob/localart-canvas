@@ -1,14 +1,26 @@
 import express from 'express'
+import path from 'node:path'
 import { RuntimeConfig } from './config'
+import { StoredGeneration } from './comfy/GenerationService'
 import { LocalChatRequest, LocalChatResponse, OllamaClient } from './ollama/OllamaClient'
+import { CanvasStore } from './storage/CanvasStore'
 
 type FetchImplementation = typeof fetch
 type OllamaChatClient = {
 	chat(request: LocalChatRequest): Promise<LocalChatResponse>
 }
+type ImageGenerationService = {
+	generate(prompt: string): Promise<StoredGeneration>
+}
+type CanvasDocumentStore = {
+	read(): Promise<unknown | null>
+	write(document: unknown): Promise<void>
+}
 
 interface AppDependencies {
 	ollamaClient?: OllamaChatClient
+	generationService?: ImageGenerationService
+	canvasStore?: CanvasDocumentStore
 }
 
 async function isAvailable(fetchImplementation: FetchImplementation, url: string): Promise<boolean> {
@@ -35,7 +47,9 @@ export function createApp(
 			model: config.ollamaModel,
 			fetchImplementation,
 		})
+	const canvasStore = dependencies.canvasStore ?? new CanvasStore(config.canvasDirectory)
 	app.use(express.json({ limit: '25mb' }))
+	app.use('/assets', express.static(path.join(config.canvasDirectory, 'assets')))
 
 	app.get('/api/health', async (_request, response) => {
 		const [ollamaAvailable, comfyuiAvailable] = await Promise.all([
@@ -79,6 +93,50 @@ export function createApp(
 		} catch (error) {
 			response.status(503).json({
 				error: error instanceof Error ? error.message : 'Ollama request failed',
+			})
+		}
+	})
+
+	app.post('/api/generations', async (request, response) => {
+		if (!dependencies.generationService) {
+			response.status(503).json({
+				error: `ComfyUI workflow is not configured at ${config.comfyuiWorkflowPath}`,
+			})
+			return
+		}
+
+		const prompt = (request.body as { prompt?: unknown }).prompt
+		if (typeof prompt !== 'string' || !prompt.trim()) {
+			response.status(400).json({ error: 'prompt must be a non-empty string' })
+			return
+		}
+
+		try {
+			response.json(await dependencies.generationService.generate(prompt.trim()))
+		} catch (error) {
+			response.status(503).json({
+				error: error instanceof Error ? error.message : 'ComfyUI generation failed',
+			})
+		}
+	})
+
+	app.get('/api/canvas/state', async (_request, response) => {
+		try {
+			response.json({ document: await canvasStore.read() })
+		} catch (error) {
+			response.status(500).json({
+				error: error instanceof Error ? error.message : 'Canvas state could not be read',
+			})
+		}
+	})
+
+	app.put('/api/canvas/state', async (request, response) => {
+		try {
+			await canvasStore.write(request.body)
+			response.status(204).end()
+		} catch (error) {
+			response.status(500).json({
+				error: error instanceof Error ? error.message : 'Canvas state could not be saved',
 			})
 		}
 	})

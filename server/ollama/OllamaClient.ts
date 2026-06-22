@@ -21,11 +21,17 @@ interface OllamaTagsResponse {
 
 interface OllamaChatResponse {
 	choices?: Array<{ message?: { content?: string } }>
-	error?: string
+	error?: string | { message?: string }
 }
 
 async function readJson<T>(response: Response): Promise<T> {
 	return (await response.json()) as T
+}
+
+function getErrorMessage(error: OllamaChatResponse['error'], fallback: string): string {
+	if (typeof error === 'string') return error
+	if (error?.message) return error.message
+	return fallback
 }
 
 export class OllamaClient {
@@ -108,7 +114,10 @@ export class OllamaClient {
 		const body = await readJson<OllamaChatResponse>(response)
 		if (!response.ok) {
 			throw new Error(
-				`Ollama request failed (${response.status}): ${body.error ?? response.statusText}`
+				`Ollama request failed (${response.status}): ${getErrorMessage(
+					body.error,
+					response.statusText
+				)}`
 			)
 		}
 
