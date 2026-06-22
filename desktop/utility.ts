@@ -1,5 +1,5 @@
-import { parentPort } from 'electron'
 import { startUtilityService } from './utility-service'
+import { getUtilityParentPort } from './utility-parent-port'
 
 function requiredEnvironment(name: string): string {
 	const value = process.env[name]
@@ -8,6 +8,7 @@ function requiredEnvironment(name: string): string {
 }
 
 let closeService: (() => Promise<void>) | undefined
+const parentPort = getUtilityParentPort(process)
 
 async function shutdown() {
 	await closeService?.().catch(() => undefined)
