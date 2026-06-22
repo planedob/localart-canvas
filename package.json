@@ -5,6 +5,9 @@
 	"homepage": "https://github.com/planedob/localart-canvas",
 	"license": "MIT",
 	"author": "LocalArt Canvas contributors",
+	"engines": {
+		"node": ">=22.15.0"
+	},
 	"type": "module",
 	"scripts": {
 		"build": "vite build",
