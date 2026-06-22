@@ -22,7 +22,7 @@
 - [x] Implement config parsing and make the tests pass.
 - [x] Add `/api/health` and dev scripts.
 - [x] Run tests and build.
-- [ ] Commit `feat: add local tool server`.
+- [x] Commit `feat: add local tool server`.
 
 ### Task 2: Ollama conversation slice
 
@@ -35,7 +35,7 @@
 - [x] Add `POST /api/chat`.
 - [x] Run tests and build.
 - [x] Add a minimal panel response path and verify with a real local model.
-- [ ] Commit `feat: connect local ollama chat`.
+- [x] Commit `feat: connect local ollama chat`.
 
 ### Task 3: AIImageHolder
 
@@ -47,7 +47,7 @@
 - [x] Implement the shape util and component.
 - [x] Register it in both editors.
 - [x] Browser-test display, move, and delete.
-- [ ] Commit `feat: add ai image holder shape`.
+- [x] Commit `feat: add ai image holder shape`.
 
 ### Task 4: ComfyUI adapter
 
@@ -59,7 +59,7 @@
 - [x] Implement `/prompt`, bounded `/history/{id}` polling, `/view`, and asset storage.
 - [x] Add `POST /api/generations`.
 - [x] Run tests and build.
-- [ ] Commit `feat: add comfyui generation adapter`.
+- [x] Commit `feat: add comfyui generation adapter`.
 
 ### Task 5: Annotation-to-revision UI
 
@@ -71,8 +71,8 @@
 - [x] Implement selected-shape summaries and screenshot capture.
 - [x] Show Ollama response and generation status.
 - [x] Create `AIImageHolder` from the returned asset URL.
-- [ ] Browser-test the full flow with fake Ollama/ComfyUI responses.
-- [ ] Commit `feat: connect annotation revision flow`.
+- [x] Browser-test the full flow with real Ollama and a fake ComfyUI protocol service.
+- [x] Commit `feat: add comfyui flow and local persistence`.
 
 ### Task 6: Filesystem persistence
 
@@ -84,17 +84,17 @@
 - [x] Implement `GET/PUT /api/canvas/state` and `/assets`.
 - [x] Add debounced save and startup restore.
 - [ ] Browser-test restart recovery.
-- [ ] Commit `feat: persist canvas locally`.
+- [x] Commit `feat: add comfyui flow and local persistence`.
 
 ### Task 7: M1 verification
 
 **Files:**
 - Modify: `README.md`, `PROGRESS.md`
 
-- [ ] Run `npm test`.
-- [ ] Run `npm run build`.
-- [ ] Verify no-cloud-key startup.
-- [ ] Complete a real Ollama conversation.
+- [x] Run `npm test`.
+- [x] Run `npm run build`.
+- [x] Verify no-cloud-key startup.
+- [x] Complete a real Ollama conversation.
 - [ ] Complete a real ComfyUI generation and annotation-to-revision flow.
 - [ ] Restart and verify state recovery.
 - [ ] Push `main`, wait for green CI, create and push `m1-done`.

@@ -1,8 +1,7 @@
 import { FormEvent, useState } from 'react'
-import { createShapeId, FileHelpers, useValue } from 'tldraw'
+import { createShapeId, Editor, FileHelpers, useValue } from 'tldraw'
 import { requestGeneration, requestLocalChat } from '../local-api'
 import { getRevisionPlacement, summarizeSelectedShapes } from '../revision-context'
-import { useAgent } from '../agent/TldrawAgentAppProvider'
 import {
 	AI_IMAGE_HOLDER_DEFAULT_PROPS,
 	AI_IMAGE_HOLDER_TYPE,
@@ -15,8 +14,7 @@ interface ChatEntry {
 	model?: string
 }
 
-export function ChatPanel() {
-	const { editor } = useAgent()
+export function ChatPanel({ editor }: { editor: Editor }) {
 	const selectedShapes = useValue('local-chat-selection', () => editor.getSelectedShapes(), [
 		editor,
 	])

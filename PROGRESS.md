@@ -35,7 +35,7 @@ npm run dev -- --host 127.0.0.1
 
 已知限制：
 
-- Agent 请求仍依赖 Cloudflare 与云模型密钥；M1 替换为本地服务/Ollama。
+- M0 基线中的 Agent 请求依赖 Cloudflare 与云模型密钥；该运行路径已在 M1 删除。
 - ComfyUI 未启动，因此 M0 只完成 API 调研，未执行真实生成。
 - tldraw 生产使用需要合法 license key，不能通过代码移除许可证水印。
 
@@ -56,10 +56,31 @@ npm run dev -- --host 127.0.0.1
 - 画布截图已随选中 shape 摘要发送给 Ollama；`gemma3:4b` 真实视觉请求返回 `VISION_OK`。
 - ComfyUI adapter 已覆盖 workflow prompt 注入、提交、历史轮询、结果下载、节点错误和超时。
 - 生成结果会保存到 `canvas/assets/`，面板会把返回的 `AIImageHolder` 放到源对象右侧。
-- `canvas/document.json` 自动保存已生效，当前 API 可读回包含 2 个 shape 的完整 snapshot。
+- 使用本地假 ComfyUI 协议服务完成浏览器端闭环：选中矩形、调用真实 Ollama、点击生成、在原图右侧创建 `AIImageHolder`。
+- 修复 Vite 缺少 `/assets` 代理导致生成图片无法加载的问题；修复后浏览器控制台无 error。
+- `canvas/document.json` 自动保存已生效，API 可读回包含生成图片形状的完整 snapshot，图片文件已写入 `canvas/assets/`。
+- 删除旧 Cloudflare Worker、云模型 SDK 和未使用的官方 Agent runtime；当前启动不需要云模型 key。
+- tldraw license key 可通过 `VITE_TLDRAW_LICENSE_KEY` 合法注入。
+
+当前复现：
+
+```bash
+npm ci
+OLLAMA_MODEL=gemma3:4b \
+COMFYUI_WORKFLOW_PATH=./config/comfyui-workflow.json \
+npm run dev
+```
+
+协议级闭环手测：
+
+1. 启动符合 ComfyUI `/prompt`、`/history/{prompt_id}`、`/view` 协议的服务及 API workflow。
+2. 在画布创建并选中矩形，输入修订要求后点击 `Send to Ollama`。
+3. 收到模型回复后点击 `Generate revision`。
+4. 确认新 `AIImageHolder` 出现在原选区右侧，图片 URL 为 `/assets/...`。
+5. 确认 `canvas/document.json` 和 `canvas/assets/` 已写入。
 
 待完成：
 
 - 提供并验证本机 Flux.2 klein ComfyUI API workflow。
 - 用真实 ComfyUI 完成图片生成与落画布。
-- 浏览器重启后复验 `canvas/document.json` 自动恢复。
+- 完成浏览器进程级重启后的可视化恢复复验。当前存储 API 与落盘数据已验证；最后一次自动浏览器复验受浏览器插件本地 URL 导航策略阻断。
