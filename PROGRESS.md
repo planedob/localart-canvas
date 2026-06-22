@@ -51,11 +51,12 @@ npm run dev -- --host 127.0.0.1
 - 安装本地 `gemma3:1b`，真实请求返回成功。
 - 右侧 LocalArt Agent 面板可读取选中 shape 摘要并显示 Ollama 回复。
 - 浏览器实测：选中矩形后发送请求，面板显示 `PANEL_OK` 与模型名，无新增 console error。
+- `AIImageHolder` 自定义形状已注册到主画布和历史 viewer。
+- 浏览器实测：AI 图片占位形状可显示、移动和删除，无 console error。
 
 待完成：
 
 - 画布截图加入模型上下文。
-- `AIImageHolder` 自定义形状。
 - ComfyUI workflow adapter 与生成按钮。
 - 标注到新图的端到端定位。
 - `./canvas/` 文件持久化。

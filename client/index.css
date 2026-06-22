@@ -317,6 +317,10 @@ body {
 	gap: 3px;
 }
 
+.local-chat-header .local-chat-header-actions {
+	flex-direction: row;
+}
+
 .local-chat-header span,
 .local-chat-entry small,
 .local-chat-context {

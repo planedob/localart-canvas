@@ -1,8 +1,13 @@
 import { FormEvent, useState } from 'react'
-import { useValue } from 'tldraw'
+import { createShapeId, useValue } from 'tldraw'
 import { requestLocalChat } from '../local-api'
 import { summarizeSelectedShapes } from '../revision-context'
 import { useAgent } from '../agent/TldrawAgentAppProvider'
+import {
+	AI_IMAGE_HOLDER_DEFAULT_PROPS,
+	AI_IMAGE_HOLDER_TYPE,
+	AIImageHolderShape,
+} from '../shapes/AIImageHolderShape'
 
 interface ChatEntry {
 	role: 'user' | 'assistant' | 'error'
@@ -50,6 +55,22 @@ export function ChatPanel() {
 		}
 	}
 
+	function addPlaceholder() {
+		const viewport = editor.getViewportPageBounds()
+		const id = createShapeId()
+		editor.createShape<AIImageHolderShape>({
+			id,
+			type: AI_IMAGE_HOLDER_TYPE,
+			x: viewport.center.x - AI_IMAGE_HOLDER_DEFAULT_PROPS.w / 2,
+			y: viewport.center.y - AI_IMAGE_HOLDER_DEFAULT_PROPS.h / 2,
+			props: {
+				...AI_IMAGE_HOLDER_DEFAULT_PROPS,
+				prompt: 'Placeholder revision',
+			},
+		})
+		editor.select(id)
+	}
+
 	return (
 		<aside className="chat-panel local-chat-panel tl-theme__dark">
 			<header className="local-chat-header">
@@ -57,9 +78,14 @@ export function ChatPanel() {
 					<strong>LocalArt Agent</strong>
 					<span>Ollama · local</span>
 				</div>
-				<button type="button" onClick={() => setEntries([])} aria-label="Clear conversation">
-					Clear
-				</button>
+				<div className="local-chat-header-actions">
+					<button type="button" onClick={addPlaceholder}>
+						Add AI placeholder
+					</button>
+					<button type="button" onClick={() => setEntries([])} aria-label="Clear conversation">
+						Clear
+					</button>
+				</div>
 			</header>
 
 			<div className="local-chat-history" aria-live="polite">

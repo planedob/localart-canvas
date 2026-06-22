@@ -19,6 +19,7 @@ import { AgentViewportBoundsHighlights } from './components/highlights/AgentView
 import { AllContextHighlights } from './components/highlights/ContextHighlights'
 import { TargetAreaTool } from './tools/TargetAreaTool'
 import { TargetShapeTool } from './tools/TargetShapeTool'
+import { AIImageHolderShapeUtil } from './shapes/AIImageHolderShape'
 
 // Customize tldraw's styles to play to the agent's strengths
 DefaultSizeStyle.setDefaultValue('s')
@@ -84,6 +85,7 @@ function App() {
 				<div className="tldraw-canvas">
 					<Tldraw
 						persistenceKey="tldraw-agent-demo"
+						shapeUtils={[AIImageHolderShapeUtil]}
 						tools={tools}
 						overrides={overrides}
 						components={components}

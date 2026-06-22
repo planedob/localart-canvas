@@ -43,10 +43,10 @@
 - Create: `client/shapes/AIImageHolderShape.tsx`, `client/shapes/AIImageHolderShape.test.ts`
 - Modify: `client/App.tsx`, `client/components/chat-history/TldrawViewer.tsx`
 
-- [ ] Write failing tests for default props and rectangle geometry.
-- [ ] Implement the shape util and component.
-- [ ] Register it in both editors.
-- [ ] Browser-test display, move, and delete.
+- [x] Write failing tests for default props and rectangle geometry.
+- [x] Implement the shape util and component.
+- [x] Register it in both editors.
+- [x] Browser-test display, move, and delete.
 - [ ] Commit `feat: add ai image holder shape`.
 
 ### Task 4: ComfyUI adapter

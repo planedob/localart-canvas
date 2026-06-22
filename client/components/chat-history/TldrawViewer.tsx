@@ -12,6 +12,7 @@ import {
 	TldrawUiContextProvider,
 	TLShape,
 } from 'tldraw'
+import { AIImageHolderShapeUtil } from '../../shapes/AIImageHolderShape'
 
 export function TldrawViewer({
 	shapes,
@@ -68,7 +69,7 @@ export function TldrawViewer({
 					autoFocus={false}
 					components={components ?? {}}
 					onMount={setEditor}
-					shapeUtils={defaultShapeUtils}
+					shapeUtils={[...defaultShapeUtils, AIImageHolderShapeUtil]}
 					bindingUtils={defaultBindingUtils}
 					tools={tools}
 					options={defaultOptions}
