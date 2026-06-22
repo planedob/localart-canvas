@@ -94,7 +94,7 @@ npm run dev
 
 ## M2 · 第一阶段 Electron 壳
 
-状态：实现完成，等待最终桌面端手测与跨平台 CI。
+状态：本机验收完成，跨平台 CI 等待远端运行。
 
 已完成：
 
@@ -107,14 +107,19 @@ npm run dev
 - Electron 退出只回收 LocalArt utility 与开发态 Vite，不操作用户的 Ollama、ComfyUI 或模型。
 - Forge 已在 Apple arm64 生成未签名 `.app` 与 ZIP；ZIP 路径为 `out/make/zip/darwin/arm64/LocalArt Canvas-darwin-arm64-0.0.0.zip`。
 - GitHub Actions 已配置 macOS、Windows、Ubuntu 三平台测试、构建与 Forge make，并上传构建产物。
-- 自动测试当前 61 项通过，renderer、desktop bundle、类型检查与 macOS package/make 通过。
+- 自动测试当前 67 项通过，renderer、desktop bundle、类型检查与 macOS package/make 通过。
+- 修复实测发现的三个 Electron 打包边界问题：utility 使用 `process.parentPort`、utility 入口从 asar 解包、打包态 `cwd` 使用 resources 目录；均新增回归测试。
+- 浏览器模式实测通过：状态区显示 Ollama/ComfyUI/canvas，`gemma3:4b` 返回 `BROWSER_M2_OK`；无新增应用错误，仅有已知 tldraw zh-CN locale warning。
+- Electron 开发态实测通过：loading → 动态 utility 端口 → Vite 主窗口，真实 Ollama 返回 `ELECTRON_M2_OK`。
+- Electron 开发态退出后 LocalArt utility 与 Vite 均回收，用户 `ollama serve` 保持可访问。
+- 打包态实测通过：应用从动态端口加载，canvas 路径为 `/Users/dc/Library/Application Support/localart-canvas/canvas`。
+- 打包态新增形状、退出、重开后恢复成功，未迁移仓库 `./canvas`。
+- 打包态真实闭环通过：Ollama 生成修订提示，ComfyUI Flux.2 klein 4 步生成约 60 秒，512×512 PNG 保存到 `userData/canvas/assets`，新 `AIImageHolder` 出现在源图右侧。
+- 关闭打包应用后无残留 LocalArt 进程，Ollama 与 ComfyUI 均保持可访问；测试用 ComfyUI 随后由开发终端单独停止。
 
-待最终验收：
+待远端确认：
 
-- macOS Electron 开发态实际启动和窗口交互。
-- 未签名 macOS `.app` 实际打开、关闭、重启与 `userData/canvas` 恢复。
-- Electron 内真实 Ollama + ComfyUI 修订闭环，并确认退出前后两个用户服务状态不变。
-- 浏览器模式 M1 核心闭环回归。
-- GitHub Actions Windows/Linux 打包结果；两平台仍标记为实机未验。
+- GitHub Actions macOS、Windows、Ubuntu 打包结果。
+- Windows/Linux GUI、路径与模型连接仍标记为实机未验。
 
 本阶段未包含：云模型 fallback、历史/导出、主题与快捷键、自动模型安装/启动、数据自动迁移、签名与公证。
