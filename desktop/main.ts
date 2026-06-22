@@ -2,6 +2,7 @@ import { spawn, ChildProcess } from 'node:child_process'
 import path from 'node:path'
 import { app, BrowserWindow, utilityProcess, UtilityProcess } from 'electron'
 import { getCanvasDir } from './canvas-dir'
+import { getConfigDir } from './config-dir'
 import { createServiceController, ServiceController } from './service-controller'
 import { ServiceEvent } from './service-lifecycle'
 import { getUtilityEntryPath, getUtilityWorkingDirectory } from './runtime-paths'
@@ -70,6 +71,11 @@ function getUtilityEnvironment(): Record<string, string> {
 	environment.LOCALART_CANVAS_DIR = getCanvasDir({
 		override: process.env.LOCALART_CANVAS_DIR,
 		isPackaged: app.isPackaged,
+		projectDirectory,
+		userDataDirectory: app.getPath('userData'),
+	})
+	environment.LOCALART_CONFIG_DIR = getConfigDir({
+		override: process.env.LOCALART_CONFIG_DIR,
 		projectDirectory,
 		userDataDirectory: app.getPath('userData'),
 	})

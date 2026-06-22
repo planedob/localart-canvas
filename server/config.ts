@@ -9,6 +9,7 @@ export interface RuntimeConfig {
 	comfyuiWorkflowPath: string
 	comfyuiPromptNodeId: string
 	canvasDirectory: string
+	modelConfigDirectory: string
 }
 
 type RuntimeEnvironment = Record<string, string | undefined>
@@ -53,6 +54,10 @@ export function createRuntimeConfig(
 		canvasDirectory: resolveFromProject(
 			projectDirectory,
 			environment.LOCALART_CANVAS_DIR ?? 'canvas'
+		),
+		modelConfigDirectory: resolveFromProject(
+			projectDirectory,
+			environment.LOCALART_CONFIG_DIR ?? '.localart'
 		),
 	}
 }

@@ -42,7 +42,7 @@
 - Modify: `desktop/utility-service.ts`
 - Modify: `.gitignore`
 
-- [ ] **Step 1: Write failing runtime path tests**
+- [x] **Step 1: Write failing runtime path tests**
 
 ```ts
 expect(getConfigDir({ projectDirectory: '/repo', userDataDirectory: '/user' })).toBe('/user/config')
@@ -50,13 +50,13 @@ expect(getConfigDir({ override: './private', projectDirectory: '/repo', userData
 expect(createRuntimeConfig({}, '/repo').modelConfigDirectory).toBe('/repo/.localart')
 ```
 
-- [ ] **Step 2: Run the focused tests and verify missing exports fail**
+- [x] **Step 2: Run the focused tests and verify missing exports fail**
 
 Run: `npx vitest run desktop/config-dir.test.ts server/config.test.ts`
 
 Expected: FAIL because `getConfigDir` and `modelConfigDirectory` do not exist.
 
-- [ ] **Step 3: Implement path resolution and propagation**
+- [x] **Step 3: Implement path resolution and propagation**
 
 ```ts
 export function getConfigDir(options: ConfigDirOptions): string {
@@ -68,13 +68,13 @@ export function getConfigDir(options: ConfigDirOptions): string {
 
 Add `modelConfigDirectory` to `RuntimeConfig`, default it to `path.resolve(projectDirectory, environment.LOCALART_CONFIG_DIR ?? '.localart')`, pass Electron's resolved absolute path through `LOCALART_CONFIG_DIR`, create it before starting Express, and add `.localart/` to `.gitignore`.
 
-- [ ] **Step 4: Run focused tests**
+- [x] **Step 4: Run focused tests**
 
 Run: `npx vitest run desktop/config-dir.test.ts server/config.test.ts desktop/utility-service.test.ts`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add .gitignore desktop/config-dir.ts desktop/config-dir.test.ts desktop/main.ts desktop/utility-service.ts server/config.ts server/config.test.ts

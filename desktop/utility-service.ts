@@ -61,6 +61,8 @@ export async function startUtilityService(
 
 	await mkdir(config.canvasDirectory, { recursive: true })
 	await access(config.canvasDirectory, constants.R_OK | constants.W_OK)
+	await mkdir(config.modelConfigDirectory, { recursive: true })
+	await access(config.modelConfigDirectory, constants.R_OK | constants.W_OK)
 
 	const indexPath =
 		options.serveRenderer && options.rendererDirectory

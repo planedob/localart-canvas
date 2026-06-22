@@ -7,7 +7,7 @@ describe('createRuntimeConfig', () => {
 		const projectDirectory = path.resolve('/workspace/localart-canvas')
 		const config = createRuntimeConfig({}, projectDirectory)
 
-		expect(config).toEqual({
+			expect(config).toEqual({
 			host: '127.0.0.1',
 			port: 3001,
 			ollamaBaseUrl: 'http://127.0.0.1:11434',
@@ -16,6 +16,7 @@ describe('createRuntimeConfig', () => {
 			comfyuiWorkflowPath: path.join(projectDirectory, 'config/comfyui-workflow.json'),
 			comfyuiPromptNodeId: '4',
 			canvasDirectory: path.join(projectDirectory, 'canvas'),
+			modelConfigDirectory: path.join(projectDirectory, '.localart'),
 		})
 	})
 
@@ -31,6 +32,7 @@ describe('createRuntimeConfig', () => {
 				COMFYUI_WORKFLOW_PATH: './fixtures/workflow.json',
 				COMFYUI_PROMPT_NODE_ID: '42',
 				LOCALART_CANVAS_DIR: './tmp/canvas',
+				LOCALART_CONFIG_DIR: './tmp/model-config',
 			},
 			projectDirectory
 		)
@@ -44,6 +46,7 @@ describe('createRuntimeConfig', () => {
 			comfyuiWorkflowPath: path.join(projectDirectory, 'fixtures/workflow.json'),
 			comfyuiPromptNodeId: '42',
 			canvasDirectory: path.join(projectDirectory, 'tmp/canvas'),
+			modelConfigDirectory: path.join(projectDirectory, 'tmp/model-config'),
 		})
 	})
 

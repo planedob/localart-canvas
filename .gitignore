@@ -8,4 +8,5 @@ out/
 canvas/
 config/comfyui-workflow.json
 .env
+.localart/
 *.log
