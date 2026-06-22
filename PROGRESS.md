@@ -91,3 +91,30 @@ npm run dev
 - Apple MPS 需使用 Flux.2 klein BF16 diffusion 权重；FP8 权重会因 PyTorch MPS 不支持 FP8 dtype 而失败。
 - tldraw 开发环境仍显示官方许可证提示，生产使用需配置合法 `VITE_TLDRAW_LICENSE_KEY`。
 - 上游 tldraw zh-CN locale 缺少两个新 key，会产生 warning，不影响功能。
+
+## M2 · 第一阶段 Electron 壳
+
+状态：实现完成，等待最终桌面端手测与跨平台 CI。
+
+已完成：
+
+- Electron 主进程使用 `utilityProcess.fork` 运行 Express 服务，服务固定监听 `127.0.0.1` 并由系统分配动态端口。
+- 主窗口等待 utility ready 消息后创建；启动失败和 renderer 加载失败会显示可读错误页。
+- `contextIsolation: true`、`nodeIntegration: false`、sandbox 开启；preload 只暴露平台与打包状态。
+- 开发模式继续使用 Vite，`LOCALART_API_TARGET` 动态指向 utility 服务；原浏览器 `npm run dev` 路径保留。
+- 打包态默认数据目录为 Electron `userData/canvas`，开发态为仓库 `./canvas`，并支持 `LOCALART_CANVAS_DIR` 覆盖。
+- `/api/health` 与右侧状态区显示 Ollama、ComfyUI 的连接状态、端点和实际 canvas 目录，并提供启动提示。
+- Electron 退出只回收 LocalArt utility 与开发态 Vite，不操作用户的 Ollama、ComfyUI 或模型。
+- Forge 已在 Apple arm64 生成未签名 `.app` 与 ZIP；ZIP 路径为 `out/make/zip/darwin/arm64/LocalArt Canvas-darwin-arm64-0.0.0.zip`。
+- GitHub Actions 已配置 macOS、Windows、Ubuntu 三平台测试、构建与 Forge make，并上传构建产物。
+- 自动测试当前 61 项通过，renderer、desktop bundle、类型检查与 macOS package/make 通过。
+
+待最终验收：
+
+- macOS Electron 开发态实际启动和窗口交互。
+- 未签名 macOS `.app` 实际打开、关闭、重启与 `userData/canvas` 恢复。
+- Electron 内真实 Ollama + ComfyUI 修订闭环，并确认退出前后两个用户服务状态不变。
+- 浏览器模式 M1 核心闭环回归。
+- GitHub Actions Windows/Linux 打包结果；两平台仍标记为实机未验。
+
+本阶段未包含：云模型 fallback、历史/导出、主题与快捷键、自动模型安装/启动、数据自动迁移、签名与公证。
