@@ -13,6 +13,7 @@ const config: RuntimeConfig = {
 	comfyuiWorkflowPath: '/tmp/workflow.json',
 	comfyuiPromptNodeId: '6',
 	canvasDirectory: '/tmp/canvas',
+	modelConfigDirectory: '/tmp/model-config',
 }
 
 describe('GET /api/health', () => {

@@ -90,7 +90,7 @@ git commit -m "feat: add local model config directory"
 - Create: `server/model/ModelConfigStore.ts`
 - Create: `server/model/ModelConfigStore.test.ts`
 
-- [ ] **Step 1: Write failing schema and persistence tests**
+- [x] **Step 1: Write failing schema and persistence tests**
 
 ```ts
 expect(createDefaultRoutingConfig({ OLLAMA_MODEL: 'gemma3:4b' }).primary).toMatchObject({
@@ -102,25 +102,25 @@ expect(await store.readSanitized()).toMatchObject({ primary: { hasApiKey: true }
 expect(JSON.stringify(await store.readSanitized())).not.toContain('sk-secret')
 ```
 
-- [ ] **Step 2: Run tests and verify missing modules fail**
+- [x] **Step 2: Run tests and verify missing modules fail**
 
 Run: `npx vitest run server/model/config-schema.test.ts server/model/ModelConfigStore.test.ts`
 
 Expected: FAIL because the modules do not exist.
 
-- [ ] **Step 3: Implement schemas, environment precedence, and atomic storage**
+- [x] **Step 3: Implement schemas, environment precedence, and atomic storage**
 
-Define `ModelSlotConfig`, `RoutingConfig`, `SanitizedModelSlot`, and explicit `SecretUpdate` unions. Use Zod to require `http:` or `https:`, reject URL username/password/query credentials, strip trailing slashes, validate timeout `1000..300000`, and require a model for enabled slots. Implement `ModelConfigStore` with `model-providers.json` and `model-secrets.json`, temporary sibling files plus `rename`, and `chmod(0o600)` for secrets where supported.
+Define `ModelSlotConfig`, `RoutingConfig`, `SanitizedModelSlot`, and explicit `SecretUpdate` unions. Use Zod to require `http:` or `https:`, reject URL username/password/query credentials, strip trailing slashes, validate timeout `1000..300000`, and require a model for enabled OpenAI-compatible slots. Ollama keeps its existing empty-model automatic discovery behavior. Implement `ModelConfigStore` with `model-providers.json` and `model-secrets.json`, temporary sibling files plus `rename`, and `chmod(0o600)` for secrets where supported.
 
 Environment overrides use `LOCALART_PRIMARY_*` and `LOCALART_BACKUP_*`; legacy `OLLAMA_BASE_URL` and `OLLAMA_MODEL` seed the default Primary. Sanitized reads expose `hasApiKey` and `environmentOverrides`, never the secret value.
 
-- [ ] **Step 4: Run focused tests**
+- [x] **Step 4: Run focused tests**
 
 Run: `npx vitest run server/model/config-schema.test.ts server/model/ModelConfigStore.test.ts`
 
 Expected: PASS, including `retain`, `set`, `clear`, restart reads, and no plaintext key in sanitized output.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add server/model/types.ts server/model/config-schema.ts server/model/config-schema.test.ts server/model/ModelConfigStore.ts server/model/ModelConfigStore.test.ts
