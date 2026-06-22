@@ -96,7 +96,7 @@ npm run dev
 
 状态：完成。
 
-验收交接、录屏步骤与第 11 节逐项自检见 `docs/M2S1-验收交接.md`。当前硬闸口状态为等待 Claude 验收；通过前不进入模型接入编码。
+验收交接、录屏步骤与第 11 节逐项自检见 `docs/M2S1-验收交接.md`。Claude 验收已通过，模型接入硬闸口已解除。
 
 已完成：
 
@@ -126,3 +126,34 @@ npm run dev
 - Windows/Linux GUI、路径与模型连接仍标记为实机未验。
 
 本阶段未包含：云模型 fallback、历史/导出、主题与快捷键、自动模型安装/启动、数据自动迁移、签名与公证。
+
+## M2 · 第二阶段统一模型 Provider
+
+状态：代码与自动验证完成，真实云端密钥和 Electron GUI 手测待执行。
+
+已完成：
+
+- Ollama 与 OpenAI-compatible 统一为服务端 `ChatBackend`，Renderer 仍只调用 loopback `/api`。
+- Primary/Backup 两槽位路由完成；只有网络失败、超时、429、5xx 触发 fallback，其他错误直接报告。
+- AIBuff、官方 OpenAI、Ollama、自定义端点预设及完整侧栏配置完成。
+- 文字与 OpenAI `image_url` 画布截图格式共用同一云端适配器。
+- 普通配置与 API Key 分文件原子保存；读取 API 只返回 `hasApiKey`，环境变量具有最高优先级。
+- Electron 使用 `userData/config`，浏览器开发模式使用已忽略的 `.localart/`，并支持 `LOCALART_CONFIG_DIR`。
+- 新增配置读取、保存、连接测试 API；测试连接只发送固定最小文字，不携带 shape 或截图。
+- 聊天面板显示实际 Primary/Backup、预设、模型及 fallback 原因；原有 ComfyUI 生成与落图流程保持不变。
+
+自动验证（2026-06-23）：
+
+- `npm test`：31 个测试文件、107 项测试通过。
+- `npm run build`：Vite renderer、Electron desktop bundle 和 TypeScript 检查通过。
+- `npm run typecheck`：通过。
+- fallback、配置持久化、密钥脱敏和 OpenAI-compatible 请求使用本地 mock 验证，不使用真实云端密钥。
+- 仍有原有 Vite 大 chunk warning；不影响构建，本阶段未扩大范围做拆包。
+
+待人工验收：
+
+1. 在侧栏填入 AIBuff 或其他 OpenAI-compatible 端点、模型和 API Key，完成文字请求。
+2. 选择画布对象，验证云模型收到截图并返回修订提示词。
+3. 人为制造可 fallback 的 Primary 错误，确认 Backup 接管并显示原因。
+4. 重启 Electron，确认配置恢复且 API Key 不显示明文。
+5. 用成功的云端回复继续调用 ComfyUI，确认新图仍落在原图右侧。

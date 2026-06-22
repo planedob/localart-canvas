@@ -369,34 +369,34 @@ git commit -m "feat: show active model route in chat"
 - Modify: `README.md`
 - Modify: `PROGRESS.md`
 
-- [ ] **Step 1: Document setup and security boundaries**
+- [x] **Step 1: Document setup and security boundaries**
 
 Add AIBuff/OpenAI/custom examples, `LOCALART_PRIMARY_*` and `LOCALART_BACKUP_*`, configuration file locations, environment precedence, strict fallback conditions, and the fact that keys are local files rather than OS keychain entries. Keep Ollama-only startup as the default path.
 
-- [ ] **Step 2: Run the full verification suite**
+- [x] **Step 2: Run the full verification suite**
 
 Run: `npm test && npm run build && npm run typecheck`
 
 Expected: all tests pass, Vite and desktop bundles build, and TypeScript reports no errors.
 
-- [ ] **Step 3: Verify secret exclusion mechanically**
+- [x] **Step 3: Verify secret exclusion mechanically**
 
 Run: `git status --short && git grep -nE 'sk-[A-Za-z0-9]{8,}|Bearer [A-Za-z0-9_-]{8,}' -- ':!package-lock.json'`
 
 Expected: no real-looking committed key; only unrelated pre-existing `.DS_Store` files remain untracked.
 
-- [ ] **Step 4: Record verification and manual-test boundaries**
+- [x] **Step 4: Record verification and manual-test boundaries**
 
 Update `PROGRESS.md` with test counts, build results, local config paths, mock fallback coverage, and mark real AIBuff/Ollama/Electron GUI checks accurately as performed or pending. Do not claim a real provider test without evidence.
 
-- [ ] **Step 5: Commit documentation**
+- [x] **Step 5: Commit documentation**
 
 ```bash
 git add README.md PROGRESS.md
 git commit -m "docs: document model provider routing"
 ```
 
-- [ ] **Step 6: Final repository check**
+- [x] **Step 6: Final repository check**
 
 Run: `git status --short && git log --oneline -10`
 
