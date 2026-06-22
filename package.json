@@ -11,10 +11,14 @@
 	"type": "module",
 	"main": ".desktop/main.cjs",
 	"scripts": {
-		"build": "vite build && npm run typecheck",
+		"build": "vite build && npm run build:desktop && npm run typecheck",
+		"build:desktop": "node scripts/build-desktop.mjs",
 		"dev": "concurrently -k -n server,client \"npm:dev:server\" \"npm:dev:client\"",
 		"dev:client": "vite --host 127.0.0.1",
+		"dev:desktop": "npm run build:desktop && electron .",
 		"dev:server": "tsx watch server/index.ts",
+		"make": "npm run build && electron-forge make",
+		"package": "npm run build && electron-forge package",
 		"preview": "vite preview",
 		"test": "vitest run --config vitest.config.ts",
 		"typecheck": "tsc --noEmit --composite false --declaration false --declarationMap false --emitDeclarationOnly false"
