@@ -129,7 +129,7 @@ npm run dev
 
 ## M2 · 第二阶段统一模型 Provider
 
-状态：代码、自动验证与浏览器本地模型实测完成；真实云端密钥和 Electron GUI 手测待执行。
+状态：代码、自动验证、浏览器与 Electron 本地模型实测完成；真实云端密钥验收待执行。
 
 已完成：
 
@@ -160,10 +160,25 @@ npm run dev
 - 选中现有画布对象后发送 `Reply with exactly LOCAL_ROUTING_OK`，真实 Ollama 返回 `LOCAL_ROUTING_OK`，聊天面板显示 `Primary · Ollama · gemma3:4b`。
 - 浏览器控制台无应用 error；仅有已知 tldraw zh-CN locale 缺少两个 key 的 warning。
 
+Electron 开发态实测（2026-06-23）：
+
+- 当前源码 Electron 窗口显示完整 Primary/Backup 配置侧栏；测试时另一个旧打包应用实例已关闭，避免误读旧 UI。
+- Primary“测试连接”真实调用本机 `gemma3:4b`，显示 `primary connected: gemma3:4b`。
+- 保存路由后配置写入 `~/Library/Application Support/localart-canvas/config`；普通配置与密钥文件分离，密钥文件权限为 `0600`。
+- 退出并重新执行 `OLLAMA_MODEL=gemma3:4b npm run dev:desktop` 后，Primary、Backup、端点、模型与超时设置恢复成功。
+- 选中现有画布对象后发送 `Reply with exactly ELECTRON_ROUTING_OK`，真实 Ollama 返回 `ELECTRON_ROUTING_OK`，面板显示 `Primary · Ollama · gemma3:4b`。
+- 退出 Electron 后，开发态 Electron、Vite 和 utility 进程均回收；用户的 Ollama 服务继续在线。
+
+macOS 打包态实测（2026-06-23）：
+
+- 重新执行 `npm run package`，生成包含当前模型路由 UI 的 Apple arm64 未签名 `.app`；Vite、desktop bundle 与类型检查通过。
+- 打包应用从动态 loopback 端口启动，画布目录为 `userData/canvas`，路由配置从 `userData/config` 恢复。
+- 当前打包窗口显示 Primary/Backup 侧栏，Primary 真实连接 `gemma3:4b` 成功。
+- 关闭打包应用后无残留 LocalArt 进程，用户的 Ollama 服务继续在线。
+
 待人工验收：
 
 1. 在侧栏填入 AIBuff 或其他 OpenAI-compatible 端点、模型和 API Key，完成文字请求。
 2. 选择画布对象，验证云模型收到截图并返回修订提示词。
 3. 人为制造可 fallback 的 Primary 错误，确认 Backup 接管并显示原因。
-4. 重启 Electron，确认 `userData/config` 配置恢复且 API Key 不显示明文；浏览器开发模式的进程重启恢复已通过。
-5. 用成功的云端回复继续调用 ComfyUI，确认新图仍落在原图右侧。
+4. 用成功的云端回复继续调用 ComfyUI，确认新图仍落在原图右侧。
