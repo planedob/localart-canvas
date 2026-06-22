@@ -97,4 +97,4 @@
 - [x] Complete a real Ollama conversation.
 - [x] Complete a real ComfyUI generation and annotation-to-revision flow.
 - [x] Restart and verify state recovery.
-- [ ] Push `main`, wait for green CI, create and push `m1-done`.
+- [x] Push `main`, wait for green CI, create and push `m1-done`.
