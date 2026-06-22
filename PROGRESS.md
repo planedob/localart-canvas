@@ -129,7 +129,7 @@ npm run dev
 
 ## M2 · 第二阶段统一模型 Provider
 
-状态：代码与自动验证完成，真实云端密钥和 Electron GUI 手测待执行。
+状态：代码、自动验证与浏览器本地模型实测完成；真实云端密钥和 Electron GUI 手测待执行。
 
 已完成：
 
@@ -150,10 +150,20 @@ npm run dev
 - fallback、配置持久化、密钥脱敏和 OpenAI-compatible 请求使用本地 mock 验证，不使用真实云端密钥。
 - 仍有原有 Vite 大 chunk warning；不影响构建，本阶段未扩大范围做拆包。
 
+浏览器实测（2026-06-23）：
+
+- `http://127.0.0.1:5173/` 正常加载模型路由侧栏，无框架错误覆盖层。
+- 服务状态显示 Ollama 已连接、ComfyUI 未运行；未运行的 ComfyUI 不影响聊天和配置 UI。
+- Primary“测试连接”真实调用本机 `gemma3:4b`，显示 `primary connected: gemma3:4b`。
+- 保存默认路由后生成 `.localart/model-providers.json` 与 `.localart/model-secrets.json`；密钥文件权限实测为 `0600`，内容为空对象。
+- 停止并重新启动前后端后，Primary Ollama、Backup AIBuff、Base URL、模型和超时设置恢复成功。
+- 选中现有画布对象后发送 `Reply with exactly LOCAL_ROUTING_OK`，真实 Ollama 返回 `LOCAL_ROUTING_OK`，聊天面板显示 `Primary · Ollama · gemma3:4b`。
+- 浏览器控制台无应用 error；仅有已知 tldraw zh-CN locale 缺少两个 key 的 warning。
+
 待人工验收：
 
 1. 在侧栏填入 AIBuff 或其他 OpenAI-compatible 端点、模型和 API Key，完成文字请求。
 2. 选择画布对象，验证云模型收到截图并返回修订提示词。
 3. 人为制造可 fallback 的 Primary 错误，确认 Backup 接管并显示原因。
-4. 重启 Electron，确认配置恢复且 API Key 不显示明文。
+4. 重启 Electron，确认 `userData/config` 配置恢复且 API Key 不显示明文；浏览器开发模式的进程重启恢复已通过。
 5. 用成功的云端回复继续调用 ComfyUI，确认新图仍落在原图右侧。
