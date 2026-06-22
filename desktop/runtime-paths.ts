@@ -11,3 +11,7 @@ export function getUtilityEntryPath(options: RuntimePathOptions): string {
 		? path.join(options.resourcesPath, 'app.asar.unpacked', '.desktop', 'utility.cjs')
 		: path.join(options.appPath, '.desktop', 'utility.cjs')
 }
+
+export function getUtilityWorkingDirectory(options: RuntimePathOptions): string {
+	return options.isPackaged ? options.resourcesPath : options.appPath
+}

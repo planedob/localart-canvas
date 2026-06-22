@@ -4,7 +4,7 @@ import { app, BrowserWindow, utilityProcess, UtilityProcess } from 'electron'
 import { getCanvasDir } from './canvas-dir'
 import { createServiceController, ServiceController } from './service-controller'
 import { ServiceEvent } from './service-lifecycle'
-import { getUtilityEntryPath } from './runtime-paths'
+import { getUtilityEntryPath, getUtilityWorkingDirectory } from './runtime-paths'
 
 const DEVELOPMENT_URL = 'http://127.0.0.1:5173'
 const STARTUP_TIMEOUT_MS = 30_000
@@ -165,13 +165,14 @@ async function openMainWindow(port: number): Promise<void> {
 }
 
 function startUtilityProcess(): void {
-	const utilityPath = getUtilityEntryPath({
+	const runtimePaths = {
 		isPackaged: app.isPackaged,
 		appPath: app.getAppPath(),
 		resourcesPath: process.resourcesPath,
-	})
+	}
+	const utilityPath = getUtilityEntryPath(runtimePaths)
 	utility = utilityProcess.fork(utilityPath, [], {
-		cwd: app.getAppPath(),
+		cwd: getUtilityWorkingDirectory(runtimePaths),
 		env: getUtilityEnvironment(),
 		serviceName: 'LocalArt Tool Server',
 		stdio: 'inherit',
