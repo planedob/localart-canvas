@@ -94,7 +94,7 @@ npm run dev
 
 ## M2 · 第一阶段 Electron 壳
 
-状态：本机验收完成，跨平台 CI 等待远端运行。
+状态：完成。
 
 已完成：
 
@@ -116,10 +116,11 @@ npm run dev
 - 打包态新增形状、退出、重开后恢复成功，未迁移仓库 `./canvas`。
 - 打包态真实闭环通过：Ollama 生成修订提示，ComfyUI Flux.2 klein 4 步生成约 60 秒，512×512 PNG 保存到 `userData/canvas/assets`，新 `AIImageHolder` 出现在源图右侧。
 - 关闭打包应用后无残留 LocalArt 进程，Ollama 与 ComfyUI 均保持可访问；测试用 ComfyUI 随后由开发终端单独停止。
+- GitHub 基础 CI `27968992033` 通过。
+- Desktop package `27968992057` 通过：macOS、Ubuntu、Windows 均完成 67 项测试、build、Forge make 与产物上传。
 
-待远端确认：
+仍属已知限制：
 
-- GitHub Actions macOS、Windows、Ubuntu 打包结果。
 - Windows/Linux GUI、路径与模型连接仍标记为实机未验。
 
 本阶段未包含：云模型 fallback、历史/导出、主题与快捷键、自动模型安装/启动、数据自动迁移、签名与公证。
