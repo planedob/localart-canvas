@@ -4,6 +4,7 @@ import { app, BrowserWindow, utilityProcess, UtilityProcess } from 'electron'
 import { getCanvasDir } from './canvas-dir'
 import { createServiceController, ServiceController } from './service-controller'
 import { ServiceEvent } from './service-lifecycle'
+import { getUtilityEntryPath } from './runtime-paths'
 
 const DEVELOPMENT_URL = 'http://127.0.0.1:5173'
 const STARTUP_TIMEOUT_MS = 30_000
@@ -164,7 +165,11 @@ async function openMainWindow(port: number): Promise<void> {
 }
 
 function startUtilityProcess(): void {
-	const utilityPath = path.join(app.getAppPath(), '.desktop', 'utility.cjs')
+	const utilityPath = getUtilityEntryPath({
+		isPackaged: app.isPackaged,
+		appPath: app.getAppPath(),
+		resourcesPath: process.resourcesPath,
+	})
 	utility = utilityProcess.fork(utilityPath, [], {
 		cwd: app.getAppPath(),
 		env: getUtilityEnvironment(),

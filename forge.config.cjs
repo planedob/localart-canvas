@@ -4,7 +4,7 @@ const { MakerZIP } = require('@electron-forge/maker-zip')
 
 module.exports = {
 	packagerConfig: {
-		asar: true,
+		asar: { unpack: '**/.desktop/utility.cjs' },
 		name: 'LocalArt Canvas',
 		executableName: 'localart-canvas',
 		extraResource: ['dist', 'config/comfyui-workflow.example.json'],
