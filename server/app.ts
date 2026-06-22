@@ -69,6 +69,7 @@ export function createApp(
 					url: config.comfyuiBaseUrl,
 				},
 			},
+			canvas: { directory: config.canvasDirectory },
 		})
 	})
 

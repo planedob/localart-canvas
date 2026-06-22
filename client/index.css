@@ -28,6 +28,84 @@ body {
 	height: 100%;
 }
 
+.localart-sidebar {
+	display: flex;
+	min-height: 0;
+	flex-direction: column;
+	height: 100vh;
+	background: #18181b;
+	border-left: 1px solid #3f3f46;
+}
+
+.localart-sidebar .chat-panel {
+	min-height: 0;
+	height: auto;
+	flex: 1;
+	border-left: 0;
+}
+
+.service-status {
+	flex: 0 0 auto;
+	padding: 12px 14px;
+	color: #e4e4e7;
+	background: #18181b;
+	border-bottom: 1px solid #3f3f46;
+	font-size: 11px;
+}
+
+.service-status header,
+.service-status-row > div,
+.service-status-error {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.service-status button {
+	border: 0;
+	border-radius: 6px;
+	padding: 4px 7px;
+	color: #e4e4e7;
+	background: #3f3f46;
+	cursor: pointer;
+}
+
+.service-status-row,
+.service-status-canvas {
+	display: grid;
+	gap: 3px;
+	margin-top: 9px;
+}
+
+.service-status code {
+	overflow: hidden;
+	color: #a1a1aa;
+	font-size: 10px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.service-status small {
+	color: #fbbf24;
+}
+
+.service-status-badge {
+	border-radius: 999px;
+	padding: 1px 6px;
+	font-size: 10px;
+}
+
+.service-status-badge.connected {
+	color: #86efac;
+	background: #14532d;
+}
+
+.service-status-badge.disconnected {
+	color: #fde68a;
+	background: #713f12;
+}
+
 /* Chat Panel */
 
 .chat-panel.tl-theme__light {

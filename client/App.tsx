@@ -3,6 +3,7 @@ import { DefaultSizeStyle, Editor, ErrorBoundary, TLComponents, Tldraw, TldrawUi
 import { ChatPanel } from './components/ChatPanel'
 import { ChatPanelFallback } from './components/ChatPanelFallback'
 import { CanvasPersistence } from './components/CanvasPersistence'
+import { ServiceStatus } from './components/ServiceStatus'
 import { AIImageHolderShapeUtil } from './shapes/AIImageHolderShape'
 
 // Customize tldraw's styles to play to the agent's strengths
@@ -30,9 +31,12 @@ function App() {
 						<CanvasPersistence />
 					</Tldraw>
 				</div>
-				<ErrorBoundary fallback={ChatPanelFallback}>
-					{editor && <ChatPanel editor={editor} />}
-				</ErrorBoundary>
+				<div className="localart-sidebar">
+					<ServiceStatus />
+					<ErrorBoundary fallback={ChatPanelFallback}>
+						{editor && <ChatPanel editor={editor} />}
+					</ErrorBoundary>
+				</div>
 			</div>
 		</TldrawUiToastsProvider>
 	)

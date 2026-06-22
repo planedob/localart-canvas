@@ -34,6 +34,7 @@ describe('GET /api/health', () => {
 				ollama: { available: true, url: 'http://ollama.test' },
 				comfyui: { available: false, url: 'http://comfy.test' },
 			},
+			canvas: { directory: '/tmp/canvas' },
 		})
 	})
 })
