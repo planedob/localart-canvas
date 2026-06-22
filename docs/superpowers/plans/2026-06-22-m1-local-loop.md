@@ -30,11 +30,11 @@
 - Create: `server/ollama/OllamaClient.ts`, `server/ollama/OllamaClient.test.ts`
 - Modify: `server/app.ts`
 
-- [ ] Write failing tests for model discovery, configured-model selection, no-model error, success, and HTTP error mapping.
-- [ ] Implement the minimal client against `/api/tags` and `/v1/chat/completions`.
-- [ ] Add `POST /api/chat`.
-- [ ] Run tests and build.
-- [ ] Add a minimal panel response path and verify with a fake server.
+- [x] Write failing tests for model discovery, configured-model selection, no-model error, success, and HTTP error mapping.
+- [x] Implement the minimal client against `/api/tags` and `/v1/chat/completions`.
+- [x] Add `POST /api/chat`.
+- [x] Run tests and build.
+- [x] Add a minimal panel response path and verify with a real local model.
 - [ ] Commit `feat: connect local ollama chat`.
 
 ### Task 3: AIImageHolder

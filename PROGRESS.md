@@ -38,3 +38,24 @@ npm run dev -- --host 127.0.0.1
 - Agent 请求仍依赖 Cloudflare 与云模型密钥；M1 替换为本地服务/Ollama。
 - ComfyUI 未启动，因此 M0 只完成 API 调研，未执行真实生成。
 - tldraw 生产使用需要合法 license key，不能通过代码移除许可证水印。
+
+## M1 · MVP 核心闭环
+
+状态：进行中。
+
+已完成：
+
+- 本地 Express tool server 与 `/api/health`。
+- Vite `/api` 同源代理，开发环境不再依赖 Cloudflare Vite runtime。
+- Ollama client：模型发现、配置校验、OpenAI 兼容聊天和可读错误。
+- 安装本地 `gemma3:1b`，真实请求返回成功。
+- 右侧 LocalArt Agent 面板可读取选中 shape 摘要并显示 Ollama 回复。
+- 浏览器实测：选中矩形后发送请求，面板显示 `PANEL_OK` 与模型名，无新增 console error。
+
+待完成：
+
+- 画布截图加入模型上下文。
+- `AIImageHolder` 自定义形状。
+- ComfyUI workflow adapter 与生成按钮。
+- 标注到新图的端到端定位。
+- `./canvas/` 文件持久化。

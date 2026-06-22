@@ -1,58 +1,97 @@
-import { FormEventHandler, useCallback, useRef } from 'react'
+import { FormEvent, useState } from 'react'
+import { useValue } from 'tldraw'
+import { requestLocalChat } from '../local-api'
+import { summarizeSelectedShapes } from '../revision-context'
 import { useAgent } from '../agent/TldrawAgentAppProvider'
-import { ChatHistory } from './chat-history/ChatHistory'
-import { ChatInput } from './ChatInput'
-import { TodoList } from './TodoList'
+
+interface ChatEntry {
+	role: 'user' | 'assistant' | 'error'
+	text: string
+	model?: string
+}
 
 export function ChatPanel() {
-	const agent = useAgent()
-	const inputRef = useRef<HTMLTextAreaElement>(null)
+	const { editor } = useAgent()
+	const selectedShapes = useValue('local-chat-selection', () => editor.getSelectedShapes(), [
+		editor,
+	])
+	const [input, setInput] = useState('')
+	const [entries, setEntries] = useState<ChatEntry[]>([])
+	const [isSending, setIsSending] = useState(false)
 
-	const handleSubmit = useCallback<FormEventHandler<HTMLFormElement>>(
-		async (e) => {
-			e.preventDefault()
-			if (!inputRef.current) return
-			const formData = new FormData(e.currentTarget)
-			const value = formData.get('input') as string
+	async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+		event.preventDefault()
+		const message = input.trim()
+		if (!message || isSending) return
 
-			// If the user's message is empty, just cancel the current request (if there is one)
-			if (value === '') {
-				agent.cancel()
-				return
-			}
+		setInput('')
+		setIsSending(true)
+		setEntries((current) => [...current, { role: 'user', text: message }])
 
-			// Clear the chat input (context is cleared after it's captured in requestAgentActions)
-			inputRef.current.value = ''
-
-			// Sending a new message to the agent should interrupt the current request
-			agent.interrupt({
-				input: {
-					agentMessages: [value],
-					bounds: agent.editor.getViewportPageBounds(),
-					source: 'user',
-					contextItems: agent.context.getItems(),
-				},
+		try {
+			const response = await requestLocalChat({
+				message,
+				selectedShapes: summarizeSelectedShapes(selectedShapes),
 			})
-		},
-		[agent]
-	)
-
-	const handleNewChat = useCallback(() => {
-		agent.reset()
-	}, [agent])
+			setEntries((current) => [
+				...current,
+				{ role: 'assistant', text: response.message, model: response.model },
+			])
+		} catch (error) {
+			setEntries((current) => [
+				...current,
+				{
+					role: 'error',
+					text: error instanceof Error ? error.message : 'Local model request failed',
+				},
+			])
+		} finally {
+			setIsSending(false)
+		}
+	}
 
 	return (
-		<div className="chat-panel tl-theme__dark">
-			<div className="chat-header">
-				<button className="new-chat-button" onClick={handleNewChat}>
-					+
+		<aside className="chat-panel local-chat-panel tl-theme__dark">
+			<header className="local-chat-header">
+				<div>
+					<strong>LocalArt Agent</strong>
+					<span>Ollama · local</span>
+				</div>
+				<button type="button" onClick={() => setEntries([])} aria-label="Clear conversation">
+					Clear
 				</button>
+			</header>
+
+			<div className="local-chat-history" aria-live="polite">
+				{entries.length === 0 ? (
+					<p className="local-chat-empty">
+						Select canvas shapes, then describe the revision you want.
+					</p>
+				) : (
+					entries.map((entry, index) => (
+						<div className={`local-chat-entry ${entry.role}`} key={`${entry.role}-${index}`}>
+							<span>{entry.role === 'user' ? 'You' : entry.role === 'error' ? 'Error' : 'Agent'}</span>
+							<p>{entry.text}</p>
+							{entry.model && <small>{entry.model}</small>}
+						</div>
+					))
+				)}
 			</div>
-			<ChatHistory agent={agent} />
-			<div className="chat-input-container">
-				<TodoList agent={agent} />
-				<ChatInput handleSubmit={handleSubmit} inputRef={inputRef} />
-			</div>
-		</div>
+
+			<form className="local-chat-form" onSubmit={handleSubmit}>
+				<div className="local-chat-context">
+					{selectedShapes.length} selected shape{selectedShapes.length === 1 ? '' : 's'}
+				</div>
+				<textarea
+					aria-label="Revision request"
+					placeholder="Describe the revision"
+					value={input}
+					onChange={(event) => setInput(event.currentTarget.value)}
+				/>
+				<button disabled={!input.trim() || isSending}>
+					{isSending ? 'Thinking…' : 'Send to Ollama'}
+				</button>
+			</form>
+		</aside>
 	)
 }
