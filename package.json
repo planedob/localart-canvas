@@ -5,6 +5,9 @@
 	"homepage": "https://github.com/planedob/localart-canvas",
 	"license": "MIT",
 	"author": "LocalArt Canvas contributors",
+	"config": {
+		"forge": "./forge.config.cjs"
+	},
 	"engines": {
 		"node": ">=22.15.0"
 	},
