@@ -59,6 +59,28 @@ describe('OllamaClient', () => {
 		expect(result.model).toBe('gemma3:4b')
 	})
 
+	it('unloads the model after a successful chat to leave memory for image generation', async () => {
+		const fetchImplementation = vi
+			.fn()
+			.mockResolvedValueOnce(jsonResponse({ models: [{ name: 'gemma3:4b' }] }))
+			.mockResolvedValueOnce(jsonResponse({ choices: [{ message: { content: 'Done' } }] }))
+			.mockResolvedValueOnce(jsonResponse({ done: true }))
+		const client = new OllamaClient({
+			baseUrl: 'http://ollama.test',
+			model: 'gemma3:4b',
+			fetchImplementation,
+		})
+
+		await client.chat({ message: 'Hello', selectedShapes: [] })
+
+		expect(fetchImplementation).toHaveBeenCalledTimes(3)
+		expect(fetchImplementation.mock.calls[2][0]).toBe('http://ollama.test/api/generate')
+		expect(JSON.parse(String(fetchImplementation.mock.calls[2][1]?.body))).toEqual({
+			model: 'gemma3:4b',
+			keep_alive: 0,
+		})
+	})
+
 	it('explains how to recover when no models are installed', async () => {
 		const client = new OllamaClient({
 			baseUrl: 'http://ollama.test',

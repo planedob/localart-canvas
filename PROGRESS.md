@@ -41,7 +41,7 @@ npm run dev -- --host 127.0.0.1
 
 ## M1 · MVP 核心闭环
 
-状态：进行中。
+状态：完成。
 
 已完成：
 
@@ -61,6 +61,13 @@ npm run dev -- --host 127.0.0.1
 - `canvas/document.json` 自动保存已生效，API 可读回包含生成图片形状的完整 snapshot，图片文件已写入 `canvas/assets/`。
 - 删除旧 Cloudflare Worker、云模型 SDK 和未使用的官方 Agent runtime；当前启动不需要云模型 key。
 - tldraw license key 可通过 `VITE_TLDRAW_LICENSE_KEY` 合法注入。
+- 在外置卷安装并启动 ComfyUI `v0.25.1`，Apple MPS 识别正常。
+- 下载并逐个校验官方模型 SHA-256：Flux.2 klein 4B BF16、Qwen 3 4B FP4 text encoder、Flux2 VAE。
+- 定位 Apple MPS 不支持 FP8 diffusion 权重，切换官方 BF16 权重后真实生成成功；512×512、4 步首次生成耗时约 56 秒。
+- LocalArt `/api/generations` 真实返回本地 asset，生成的红帆船 PNG 正常解码并显示。
+- 浏览器真实闭环通过：选中画布对象 → `gemma3:4b` 返回生成提示词 → 点击 `Generate revision` → Flux.2 klein 新图出现在原图右侧。
+- Ollama 聊天成功后自动调用本地卸载接口，真实验证 `ollama ps` 为空，避免 16GB 机器同时常驻 LLM 与图像模型。
+- 停止并重启 LocalArt 前后端后，浏览器确认旧图、真实生成图、位置和 asset 全部从 `canvas/document.json` 恢复。
 
 当前复现：
 
@@ -79,8 +86,8 @@ npm run dev
 4. 确认新 `AIImageHolder` 出现在原选区右侧，图片 URL 为 `/assets/...`。
 5. 确认 `canvas/document.json` 和 `canvas/assets/` 已写入。
 
-待完成：
+已知限制：
 
-- 提供并验证本机 Flux.2 klein ComfyUI API workflow。
-- 用真实 ComfyUI 完成图片生成与落画布。
-- 完成浏览器进程级重启后的可视化恢复复验。当前存储 API 与落盘数据已验证；最后一次自动浏览器复验受浏览器插件本地 URL 导航策略阻断。
+- Apple MPS 需使用 Flux.2 klein BF16 diffusion 权重；FP8 权重会因 PyTorch MPS 不支持 FP8 dtype 而失败。
+- tldraw 开发环境仍显示官方许可证提示，生产使用需配置合法 `VITE_TLDRAW_LICENSE_KEY`。
+- 上游 tldraw zh-CN locale 缺少两个新 key，会产生 warning，不影响功能。

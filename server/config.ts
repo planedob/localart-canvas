@@ -49,7 +49,7 @@ export function createRuntimeConfig(
 			projectDirectory,
 			environment.COMFYUI_WORKFLOW_PATH ?? 'config/comfyui-workflow.json'
 		),
-		comfyuiPromptNodeId: environment.COMFYUI_PROMPT_NODE_ID?.trim() || '6',
+		comfyuiPromptNodeId: environment.COMFYUI_PROMPT_NODE_ID?.trim() || '4',
 		canvasDirectory: resolveFromProject(
 			projectDirectory,
 			environment.LOCALART_CANVAS_DIR ?? 'canvas'

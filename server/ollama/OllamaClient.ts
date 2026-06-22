@@ -126,6 +126,16 @@ export class OllamaClient {
 			throw new Error('Ollama returned an empty response')
 		}
 
+		try {
+			await this.fetchImplementation(`${this.baseUrl}/api/generate`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ model, keep_alive: 0 }),
+			})
+		} catch {
+			// The chat result is still usable if Ollama cannot unload immediately.
+		}
+
 		return { message, model }
 	}
 }

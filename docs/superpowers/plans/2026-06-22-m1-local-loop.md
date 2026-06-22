@@ -83,7 +83,7 @@
 - [x] Write failing tests for missing state, atomic write/read, corrupt JSON, and asset path validation.
 - [x] Implement `GET/PUT /api/canvas/state` and `/assets`.
 - [x] Add debounced save and startup restore.
-- [ ] Browser-test restart recovery.
+- [x] Browser-test restart recovery.
 - [x] Commit `feat: add comfyui flow and local persistence`.
 
 ### Task 7: M1 verification
@@ -95,6 +95,6 @@
 - [x] Run `npm run build`.
 - [x] Verify no-cloud-key startup.
 - [x] Complete a real Ollama conversation.
-- [ ] Complete a real ComfyUI generation and annotation-to-revision flow.
-- [ ] Restart and verify state recovery.
+- [x] Complete a real ComfyUI generation and annotation-to-revision flow.
+- [x] Restart and verify state recovery.
 - [ ] Push `main`, wait for green CI, create and push `m1-done`.

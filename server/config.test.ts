@@ -12,7 +12,7 @@ describe('createRuntimeConfig', () => {
 			ollamaModel: null,
 			comfyuiBaseUrl: 'http://127.0.0.1:8188',
 			comfyuiWorkflowPath: '/workspace/localart-canvas/config/comfyui-workflow.json',
-			comfyuiPromptNodeId: '6',
+			comfyuiPromptNodeId: '4',
 			canvasDirectory: '/workspace/localart-canvas/canvas',
 		})
 	})
