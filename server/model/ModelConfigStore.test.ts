@@ -27,18 +27,18 @@ describe('ModelConfigStore', () => {
 			config,
 			secretUpdates: {
 				primary: { action: 'retain' },
-				backup: { action: 'set', value: 'sk-super-secret' },
+				backup: { action: 'set', value: 'test-super-secret' },
 			},
 		})
 
 		const sanitized = await store.readSanitized()
 		expect(sanitized.backup.hasApiKey).toBe(true)
-		expect(JSON.stringify(sanitized)).not.toContain('sk-super-secret')
+		expect(JSON.stringify(sanitized)).not.toContain('test-super-secret')
 		expect(await readFile(path.join(directory, 'model-providers.json'), 'utf8')).not.toContain(
-			'sk-super-secret'
+			'test-super-secret'
 		)
 		expect(await readFile(path.join(directory, 'model-secrets.json'), 'utf8')).toContain(
-			'sk-super-secret'
+			'test-super-secret'
 		)
 	})
 
