@@ -106,6 +106,28 @@ body {
 	background: #713f12;
 }
 
+.model-routing-panel {
+	flex: 0 1 auto;
+	overflow: auto;
+	max-height: 48vh;
+	padding: 12px;
+	border-bottom: 1px solid #3f3f46;
+	background: #18181b;
+	color: #e4e4e7;
+	font-size: 11px;
+}
+
+.model-routing-panel header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.model-routing-panel button { border: 0; border-radius: 6px; padding: 5px 8px; background: #3f3f46; color: #f4f4f5; cursor: pointer; }
+.model-slot-card { display: grid; gap: 6px; margin: 8px 0; padding: 9px; border: 1px solid #3f3f46; border-radius: 8px; }
+.model-slot-card label { display: grid; gap: 3px; color: #a1a1aa; }
+.model-slot-card label:has(input[type='checkbox']) { display: flex; align-items: center; }
+.model-slot-card input:not([type='checkbox']), .model-slot-card select { width: 100%; border: 1px solid #52525b; border-radius: 5px; padding: 5px; background: #27272a; color: #f4f4f5; }
+.model-slot-card small { color: #fbbf24; }
+.model-routing-save { width: 100%; background: #2563eb !important; }
+.model-routing-message { color: #86efac; }
+.model-routing-error { color: #fca5a5; }
+
 /* Chat Panel */
 
 .chat-panel.tl-theme__light {

@@ -4,6 +4,7 @@ import { ChatPanel } from './components/ChatPanel'
 import { ChatPanelFallback } from './components/ChatPanelFallback'
 import { CanvasPersistence } from './components/CanvasPersistence'
 import { ServiceStatus } from './components/ServiceStatus'
+import { ModelRoutingPanel } from './components/ModelRoutingPanel'
 import { AIImageHolderShapeUtil } from './shapes/AIImageHolderShape'
 
 // Customize tldraw's styles to play to the agent's strengths
@@ -33,6 +34,7 @@ function App() {
 				</div>
 				<div className="localart-sidebar">
 					<ServiceStatus />
+					<ModelRoutingPanel />
 					<ErrorBoundary fallback={ChatPanelFallback}>
 						{editor && <ChatPanel editor={editor} />}
 					</ErrorBoundary>

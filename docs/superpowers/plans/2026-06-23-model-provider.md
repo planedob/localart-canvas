@@ -279,7 +279,7 @@ git commit -m "feat: expose model routing APIs"
 - Modify: `client/App.tsx`
 - Modify: `client/index.css`
 
-- [ ] **Step 1: Write failing renderer tests**
+- [x] **Step 1: Write failing renderer tests**
 
 ```ts
 expect(swapSlots(state)).toMatchObject({ primary: state.backup, backup: state.primary })
@@ -291,25 +291,25 @@ expect(markup).toContain('Primary → Backup')
 expect(markup).toContain('Save routing')
 ```
 
-- [ ] **Step 2: Run focused client tests and verify failure**
+- [x] **Step 2: Run focused client tests and verify failure**
 
 Run: `npx vitest run client/model-routing.test.ts client/model-routing-state.test.ts client/components/ModelRoutingPanel.test.tsx`
 
 Expected: FAIL because the API helper and component do not exist.
 
-- [ ] **Step 3: Implement API helpers and controlled editor**
+- [x] **Step 3: Implement API helpers and controlled editor**
 
 Create `getModelRouting`, `saveModelRouting`, and `testModelSlot`. Keep swapping, preset changes, secret-update construction, and dirty detection in pure functions in `model-routing-state.ts`. Build two controlled cards with preset, Base URL, model, masked API Key input, timeout, enabled switch, explicit clear, test connection, swap, dirty state, and save status. Export a presentational `ModelRoutingPanelView` for server-rendered component tests. Preset changes fill known defaults; environment-overridden inputs are disabled with a source label.
 
 Mount the panel above chat in `App.tsx`. Add compact dark sidebar CSS with a scrollable settings section so the chat history remains usable at 350px width.
 
-- [ ] **Step 4: Run client tests**
+- [x] **Step 4: Run client tests**
 
 Run: `npx vitest run client/model-routing.test.ts client/model-routing-state.test.ts client/components/ModelRoutingPanel.test.tsx`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add client/model-routing.ts client/model-routing.test.ts client/model-routing-state.ts client/model-routing-state.test.ts client/components/ModelRoutingPanel.tsx client/components/ModelRoutingPanel.test.tsx client/App.tsx client/index.css
