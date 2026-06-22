@@ -1,6 +1,8 @@
 import { createApp } from './app'
 import { createGenerationService } from './comfy/GenerationService'
 import { createRuntimeConfig } from './config'
+import { ModelConfigStore } from './model/ModelConfigStore'
+import { ModelRoutingService } from './model/ModelRoutingService'
 
 const config = createRuntimeConfig()
 const generationService = await createGenerationService({
@@ -16,7 +18,10 @@ const generationService = await createGenerationService({
 	)
 	return undefined
 })
-const app = createApp(config, fetch, { generationService })
+const modelRoutingService = new ModelRoutingService({
+	store: new ModelConfigStore({ directory: config.modelConfigDirectory }),
+})
+const app = createApp(config, fetch, { generationService, modelRoutingService })
 
 app.listen(config.port, config.host, () => {
 	console.log(`LocalArt tool server listening at http://${config.host}:${config.port}`)

@@ -5,6 +5,8 @@ import path from 'node:path'
 import { createApp } from '../server/app'
 import { createGenerationService } from '../server/comfy/GenerationService'
 import { createRuntimeConfig } from '../server/config'
+import { ModelConfigStore } from '../server/model/ModelConfigStore'
+import { ModelRoutingService } from '../server/model/ModelRoutingService'
 
 export interface UtilityServiceOptions {
 	environment: Record<string, string | undefined>
@@ -78,7 +80,15 @@ export async function startUtilityService(
 		promptNodeId: config.comfyuiPromptNodeId,
 		canvasDirectory: config.canvasDirectory,
 	}).catch(() => undefined)
-	const app = createApp(config, options.fetchImplementation ?? fetch, { generationService })
+	const fetchImplementation = options.fetchImplementation ?? fetch
+	const modelRoutingService = new ModelRoutingService({
+		store: new ModelConfigStore({
+			directory: config.modelConfigDirectory,
+			environment: options.environment,
+		}),
+		fetchImplementation,
+	})
+	const app = createApp(config, fetchImplementation, { generationService, modelRoutingService })
 
 	if (options.serveRenderer && options.rendererDirectory && indexPath) {
 		const express = await import('express')

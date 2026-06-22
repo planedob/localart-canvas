@@ -71,6 +71,35 @@ describe('POST /api/chat', () => {
 	})
 })
 
+describe('model routing API', () => {
+	it('reads, saves, tests, and uses the injected routing service', async () => {
+		const sanitized = {
+			primary: { preset: 'ollama', hasApiKey: false },
+			backup: { preset: 'aibuff', hasApiKey: true },
+		}
+		const modelRoutingService = {
+			readSanitized: vi.fn().mockResolvedValue(sanitized),
+			update: vi.fn().mockResolvedValue(undefined),
+			testConnection: vi.fn().mockResolvedValue({ message: 'LOCALART_CONNECTION_OK', model: 'm' }),
+			chat: vi.fn().mockResolvedValue({
+				message: 'routed', model: 'm', slot: 'primary', provider: 'ollama', preset: 'ollama',
+			}),
+		}
+		const app = createApp(config, vi.fn(), { modelRoutingService })
+
+		await request(app).get('/api/model-routing').expect(200, sanitized)
+		await request(app).put('/api/model-routing').send({ config: {}, secretUpdates: {} }).expect(204)
+		await request(app).post('/api/model-routing/test').send({ slot: 'primary' }).expect(200)
+		await request(app)
+			.post('/api/chat')
+			.send({ message: 'Hello', selectedShapes: [] })
+			.expect(200)
+			.expect(({ body }) => expect(body).toMatchObject({ slot: 'primary', message: 'routed' }))
+		expect(modelRoutingService.update).toHaveBeenCalledWith({ config: {}, secretUpdates: {} })
+		expect(modelRoutingService.testConnection).toHaveBeenCalledWith('primary')
+	})
+})
+
 describe('POST /api/generations', () => {
 	it('returns a stored ComfyUI generation', async () => {
 		const generationService = {

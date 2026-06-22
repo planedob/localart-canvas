@@ -228,7 +228,7 @@ git commit -m "feat: route chat through primary and backup"
 - Modify: `server/index.ts`
 - Modify: `desktop/utility-service.ts`
 
-- [ ] **Step 1: Write failing API tests**
+- [x] **Step 1: Write failing API tests**
 
 ```ts
 await request(app).get('/api/model-routing').expect(200).expect(({ body }) => {
@@ -242,25 +242,25 @@ await request(app).post('/api/chat').send(chatRequest).expect(200).expect(({ bod
 })
 ```
 
-- [ ] **Step 2: Run API tests and verify failure**
+- [x] **Step 2: Run API tests and verify failure**
 
 Run: `npx vitest run server/model/ModelRoutingService.test.ts server/app.test.ts`
 
 Expected: FAIL because model-routing endpoints and route metadata are absent.
 
-- [ ] **Step 3: Implement service construction and endpoints**
+- [x] **Step 3: Implement service construction and endpoints**
 
 `ModelRoutingService` reads effective slots, builds the correct backend, creates a `ChatRouter` per operation, saves validated updates, and tests one selected slot with the fixed message `Reply with LOCALART_CONNECTION_OK.` and no shapes or screenshot. Inject it into `createApp`; preserve dependency injection for tests.
 
 Return 400 for invalid configuration, 503 for provider failures, 200 for sanitized reads/tests, and 204 for successful saves. Extend `/api/chat` response without changing its request body.
 
-- [ ] **Step 4: Run server tests**
+- [x] **Step 4: Run server tests**
 
 Run: `npx vitest run server`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add server/model/ModelRoutingService.ts server/model/ModelRoutingService.test.ts server/app.ts server/app.test.ts server/index.ts desktop/utility-service.ts

@@ -4,6 +4,7 @@ import { RuntimeConfig } from './config'
 import { StoredGeneration } from './comfy/GenerationService'
 import { LocalChatRequest, LocalChatResponse, OllamaClient } from './ollama/OllamaClient'
 import { CanvasStore } from './storage/CanvasStore'
+import { ModelSlotName, RoutedChatResponse, RoutingConfigUpdate, SanitizedRoutingConfig } from './model/types'
 
 type FetchImplementation = typeof fetch
 type OllamaChatClient = {
@@ -16,11 +17,18 @@ type CanvasDocumentStore = {
 	read(): Promise<unknown | null>
 	write(document: unknown): Promise<void>
 }
+type ModelRoutingServiceLike = {
+	chat(request: LocalChatRequest): Promise<RoutedChatResponse>
+	readSanitized(): Promise<SanitizedRoutingConfig>
+	update(update: RoutingConfigUpdate): Promise<void>
+	testConnection(slot: ModelSlotName): Promise<LocalChatResponse>
+}
 
 interface AppDependencies {
 	ollamaClient?: OllamaChatClient
 	generationService?: ImageGenerationService
 	canvasStore?: CanvasDocumentStore
+	modelRoutingService?: ModelRoutingServiceLike
 }
 
 async function isAvailable(fetchImplementation: FetchImplementation, url: string): Promise<boolean> {
@@ -83,7 +91,7 @@ export function createApp(
 		}
 
 		try {
-			const result = await ollamaClient.chat({
+			const result = await (dependencies.modelRoutingService ?? ollamaClient).chat({
 				message: body.message,
 				selectedShapes: body.selectedShapes,
 				...(typeof body.screenshotDataUrl === 'string'
@@ -95,6 +103,48 @@ export function createApp(
 			response.status(503).json({
 				error: error instanceof Error ? error.message : 'Ollama request failed',
 			})
+		}
+	})
+
+	app.get('/api/model-routing', async (_request, response) => {
+		if (!dependencies.modelRoutingService) {
+			response.status(503).json({ error: 'Model routing service is unavailable' })
+			return
+		}
+		try {
+			response.json(await dependencies.modelRoutingService.readSanitized())
+		} catch (error) {
+			response.status(500).json({ error: error instanceof Error ? error.message : 'Model routing could not be read' })
+		}
+	})
+
+	app.put('/api/model-routing', async (request, response) => {
+		if (!dependencies.modelRoutingService) {
+			response.status(503).json({ error: 'Model routing service is unavailable' })
+			return
+		}
+		try {
+			await dependencies.modelRoutingService.update(request.body as RoutingConfigUpdate)
+			response.status(204).end()
+		} catch (error) {
+			response.status(400).json({ error: error instanceof Error ? error.message : 'Model routing could not be saved' })
+		}
+	})
+
+	app.post('/api/model-routing/test', async (request, response) => {
+		if (!dependencies.modelRoutingService) {
+			response.status(503).json({ error: 'Model routing service is unavailable' })
+			return
+		}
+		const slot = (request.body as { slot?: unknown }).slot
+		if (slot !== 'primary' && slot !== 'backup') {
+			response.status(400).json({ error: 'slot must be primary or backup' })
+			return
+		}
+		try {
+			response.json(await dependencies.modelRoutingService.testConnection(slot))
+		} catch (error) {
+			response.status(503).json({ error: error instanceof Error ? error.message : 'Model connection test failed' })
 		}
 	})
 
