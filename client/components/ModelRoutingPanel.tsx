@@ -99,9 +99,10 @@ export function ModelRoutingPanel() {
 	}, [])
 
 	if (!state) return <section className="model-routing-panel">{status === 'error' ? message : 'Loading model routing…'}</section>
+	const editorState = state
 	async function save() {
 		setStatus('saving'); setMessage('')
-		try { await saveModelRouting(buildSavePayload(state)); setState(createEditorState(await getModelRouting())); setStatus('saved'); setMessage('Routing saved') }
+		try { await saveModelRouting(buildSavePayload(editorState)); setState(createEditorState(await getModelRouting())); setStatus('saved'); setMessage('Routing saved') }
 		catch (error) { setStatus('error'); setMessage(error instanceof Error ? error.message : 'Could not save routing') }
 	}
 	async function test(slot: ModelSlotName) {
@@ -109,5 +110,5 @@ export function ModelRoutingPanel() {
 		try { const result = await testModelSlot(slot); setStatus('idle'); setMessage(`${slot} connected: ${result.model}`) }
 		catch (error) { setStatus('error'); setMessage(error instanceof Error ? error.message : 'Connection test failed') }
 	}
-	return <ModelRoutingPanelView state={state} status={status} message={message} onStateChange={setState} onSave={() => void save()} onTest={(slot) => void test(slot)} />
+	return <ModelRoutingPanelView state={editorState} status={status} message={message} onStateChange={setState} onSave={() => void save()} onTest={(slot) => void test(slot)} />
 }

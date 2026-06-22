@@ -12,7 +12,8 @@ interface ApiErrorBody {
 async function responseJson<T>(response: Response): Promise<T> {
 	const body = (await response.json()) as T | ApiErrorBody
 	if (!response.ok) {
-		throw new Error('error' in body && body.error ? body.error : `Model routing failed (${response.status})`)
+		const error = body && typeof body === 'object' && 'error' in body ? body.error : undefined
+		throw new Error(typeof error === 'string' && error ? error : `Model routing failed (${response.status})`)
 	}
 	return body as T
 }

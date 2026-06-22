@@ -94,7 +94,9 @@ describe('model routing API', () => {
 			.post('/api/chat')
 			.send({ message: 'Hello', selectedShapes: [] })
 			.expect(200)
-			.expect(({ body }) => expect(body).toMatchObject({ slot: 'primary', message: 'routed' }))
+			.expect((result: { body: unknown }) =>
+				expect(result.body).toMatchObject({ slot: 'primary', message: 'routed' })
+			)
 		expect(modelRoutingService.update).toHaveBeenCalledWith({ config: {}, secretUpdates: {} })
 		expect(modelRoutingService.testConnection).toHaveBeenCalledWith('primary')
 	})

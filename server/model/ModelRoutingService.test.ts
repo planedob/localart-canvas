@@ -73,7 +73,10 @@ describe('ModelRoutingService', () => {
 			message: 'LOCALART_CONNECTION_OK',
 			model: 'gemma3',
 		})
-		const chatCall = fetchImplementation.mock.calls.find(([input]) =>
+		const calls = fetchImplementation.mock.calls as unknown as Array<
+			[input: string | URL | Request, init?: RequestInit]
+		>
+		const chatCall = calls.find(([input]) =>
 			String(input).endsWith('/v1/chat/completions')
 		)
 		expect(chatCall).toBeDefined()
