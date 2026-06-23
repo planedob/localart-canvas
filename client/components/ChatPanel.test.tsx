@@ -25,5 +25,6 @@ describe('chat route feedback', () => {
 		expect(markup).toContain('/api/export/canvas.zip')
 		expect(markup).toContain('Export JSON')
 		expect(markup).toContain('Export ZIP')
+		expect(markup).toContain('Export PNG')
 	})
 })

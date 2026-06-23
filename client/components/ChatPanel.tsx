@@ -2,6 +2,7 @@ import { FormEvent, useState } from 'react'
 import { createShapeId, Editor, FileHelpers, useValue } from 'tldraw'
 import { getCanvasExportFilename, getCanvasExportUrl } from '../export-api'
 import { requestGeneration, requestLocalChat } from '../local-api'
+import { downloadCanvasPng } from '../png-export'
 import { summarizeSelectedShapes } from '../revision-context'
 import { insertGeneratedRevisionShape } from '../revision-shape'
 import {
@@ -144,6 +145,20 @@ export function ChatPanel({ editor }: { editor: Editor }) {
 		editor.select(id)
 	}
 
+	async function exportPng() {
+		try {
+			await downloadCanvasPng(editor)
+		} catch (error) {
+			setEntries((current) => [
+				...current,
+				{
+					role: 'error',
+					text: error instanceof Error ? error.message : 'PNG export failed',
+				},
+			])
+		}
+	}
+
 	return (
 		<aside className="chat-panel local-chat-panel tl-theme__dark">
 			<header className="local-chat-header">
@@ -153,6 +168,9 @@ export function ChatPanel({ editor }: { editor: Editor }) {
 				</div>
 				<div className="local-chat-header-actions">
 					<CanvasExportLinks />
+					<button type="button" onClick={exportPng}>
+						Export PNG
+					</button>
 					<button type="button" onClick={addPlaceholder}>
 						Add AI placeholder
 					</button>
