@@ -3,6 +3,7 @@ import { getRevisionPlacement } from './revision-context'
 import {
 	AI_IMAGE_HOLDER_DEFAULT_PROPS,
 	AI_IMAGE_HOLDER_TYPE,
+	type AIImageHolderProps,
 } from './shapes/ai-image-holder-model'
 
 type Bounds = {
@@ -15,11 +16,19 @@ type Bounds = {
 type RevisionEditor<ShapeId extends string> = {
 	getSelectionPageBounds(): Bounds | null | undefined
 	getViewportPageBounds(): Bounds
-	createShape<T>(shape: T): void
+	createShape(shape: GeneratedRevisionShape<ShapeId>): unknown
 	select(id: ShapeId): void
 }
 
 type ShapeIdFactory<ShapeId extends string> = () => ShapeId
+
+type GeneratedRevisionShape<ShapeId extends string> = {
+	id: ShapeId
+	type: typeof AI_IMAGE_HOLDER_TYPE
+	x: number
+	y: number
+	props: AIImageHolderProps
+}
 
 export function insertGeneratedRevisionShape<ShapeId extends string>(
 	editor: RevisionEditor<ShapeId>,
