@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import type { TLShapeId } from 'tldraw'
 import { insertGeneratedRevisionShape } from './revision-shape'
 import { AI_IMAGE_HOLDER_TYPE } from './shapes/ai-image-holder-model'
 
@@ -17,7 +18,7 @@ describe('insertGeneratedRevisionShape', () => {
 			editor,
 			{ url: '/assets/generated.png' },
 			'minimalist green triangle',
-			() => 'shape:generated'
+			() => 'shape:generated' as TLShapeId
 		)
 
 		expect(createdShapes).toEqual([
