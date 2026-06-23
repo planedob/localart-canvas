@@ -185,3 +185,26 @@ macOS 打包态实测（2026-06-23）：
 2. 选择画布对象，验证云模型收到截图并返回修订提示词。
 3. 人为制造可 fallback 的 Primary 错误，确认 Backup 接管并显示原因。
 4. 用成功的云端回复继续调用 ComfyUI，确认新图仍落在原图右侧。
+
+### ComfyUI history 空响应回归修复（2026-06-23）
+
+真实 ComfyUI 回归时发现：ComfyUI 已完成 prompt，并且 `/history/{prompt_id}` 最终能返回输出图片，但 LocalArt 偶发报错 `Failed to execute 'json' on 'Response': Unexpected end of JSON input`。定位结论是 ComfyUI 在执行完成前后可能短暂返回 HTTP 200 空 body，旧实现直接 `historyResponse.json()`，把“尚无可读 history”当成致命 JSON 错误。
+
+已修复：
+
+- `ComfyUIClient.generate()` 对 `/history/{prompt_id}` 的 HTTP 200 空 body 继续轮询。
+- 非空但非法 JSON 仍按 `ComfyUI history returned invalid JSON` 报错，不吞掉真实协议错误。
+- 新增回归测试覆盖“第一次 history 为空、下一次返回图片”的路径。
+
+验证记录：
+
+- `npx vitest run server/comfy/ComfyUIClient.test.ts`：1 个测试文件、6 项通过。
+- `npm test`：31 个测试文件、108 项通过。
+- 真实 ComfyUI + Flux.2 klein：从浏览器点击 `Generate revision` 后，ComfyUI 记录 `Prompt executed in 63.55 seconds`，LocalArt 服务端新增资产 `canvas/assets/c07536ec-cbe4-4b28-a7d3-a9b6ad5eda98.png`。
+- `/api/health` 显示 Ollama 与 ComfyUI 均 available。
+
+本轮未能完整确认的点：
+
+- in-app Browser 在生成后触发 URL policy 拦截，阻止继续读取 DOM/console；未绕过该安全策略。
+- `canvas/document.json` 未出现本次新资产 `c07536ec-cbe4-4b28-a7d3-a9b6ad5eda98.png` 对应的 `AIImageHolder` 引用，因此这次只确认到“Comfy 返回结果并保存资产”，未确认“前端新图落画布并 autosave”。后续需在可继续操作的浏览器/Electron 窗口中复测 UI 落图，或补一个可注入 editor/mock 的 `ChatPanel.generateRevision` 回归测试。
+- 本机本轮 `npm run typecheck`/`npm run build` 在 TypeScript 阶段出现 0 CPU 静默挂起；专项测试与全量 Vitest 已通过，TypeScript 验证需重跑获得明确退出码后才能作为通过项记录。

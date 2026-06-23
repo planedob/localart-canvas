@@ -83,6 +83,16 @@ function delay(milliseconds: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, milliseconds))
 }
 
+async function readOptionalHistory(response: Response): Promise<Record<string, HistoryEntry> | null> {
+	const text = await response.text()
+	if (!text.trim()) return null
+	try {
+		return JSON.parse(text) as Record<string, HistoryEntry>
+	} catch (error) {
+		throw new Error('ComfyUI history returned invalid JSON', { cause: error })
+	}
+}
+
 export class ComfyUIClient {
 	private readonly baseUrl: string
 	private readonly workflow: ComfyWorkflow
@@ -137,7 +147,8 @@ export class ComfyUIClient {
 			if (!historyResponse.ok) {
 				throw new Error(`ComfyUI history request failed (${historyResponse.status})`)
 			}
-			const history = (await historyResponse.json()) as Record<string, HistoryEntry>
+			const history = await readOptionalHistory(historyResponse)
+			if (!history) continue
 			const entry = history[promptId]
 			if (entry?.status?.status_str === 'error') {
 				throw new Error(`ComfyUI execution failed for prompt ${promptId}`)

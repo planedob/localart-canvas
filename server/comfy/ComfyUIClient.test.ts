@@ -125,4 +125,41 @@ describe('ComfyUIClient.generate', () => {
 			'ComfyUI generation timed out for prompt prompt-2'
 		)
 	})
+
+	it('keeps polling when ComfyUI briefly returns an empty history body', async () => {
+		const imageBytes = new Uint8Array([9, 8, 7])
+		const fetchImplementation = vi
+			.fn()
+			.mockResolvedValueOnce(jsonResponse({ prompt_id: 'prompt-empty-history' }))
+			.mockResolvedValueOnce(new Response(null, { status: 200 }))
+			.mockResolvedValueOnce(
+				jsonResponse({
+					'prompt-empty-history': {
+						outputs: {
+							'9': { images: [{ filename: 'after-empty.png', type: 'output' }] },
+						},
+					},
+				})
+			)
+			.mockResolvedValueOnce(
+				new Response(imageBytes, {
+					status: 200,
+					headers: { 'Content-Type': 'image/png' },
+				})
+			)
+		const client = new ComfyUIClient({
+			baseUrl: 'http://comfy.test',
+			workflow,
+			promptNodeId: '6',
+			fetchImplementation,
+			pollIntervalMs: 0,
+			maxPollAttempts: 3,
+		})
+
+		await expect(client.generate('prompt')).resolves.toMatchObject({
+			promptId: 'prompt-empty-history',
+			filename: 'after-empty.png',
+			imageBytes,
+		})
+	})
 })
