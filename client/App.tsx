@@ -4,6 +4,7 @@ import { ChatPanel } from './components/ChatPanel'
 import { ChatPanelFallback } from './components/ChatPanelFallback'
 import { CanvasPersistence } from './components/CanvasPersistence'
 import { HistoryPanel } from './components/HistoryPanel'
+import { LocalArtContextMenu } from './components/LocalArtContextMenu'
 import { ServiceStatus } from './components/ServiceStatus'
 import { ModelRoutingPanel } from './components/ModelRoutingPanel'
 import { AIImageHolderShapeUtil } from './shapes/AIImageHolderShape'
@@ -16,6 +17,7 @@ function App() {
 
 	const components: TLComponents = useMemo(() => {
 		return {
+			ContextMenu: LocalArtContextMenu,
 			HelperButtons: null,
 		}
 	}, [])

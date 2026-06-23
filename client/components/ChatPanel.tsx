@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { createShapeId, Editor, FileHelpers, useValue } from 'tldraw'
+import { LOCALART_AGENT_ACTION_EVENT, readAgentPanelAction } from '../agent-events'
 import { getAgentShortcutAction } from '../agent-shortcuts'
 import { getCanvasExportFilename, getCanvasExportUrl } from '../export-api'
 import { requestGeneration, requestLocalChat } from '../local-api'
@@ -217,6 +218,18 @@ export function ChatPanel({ editor }: { editor: Editor }) {
 
 		document.addEventListener('keydown', handleAgentShortcut)
 		return () => document.removeEventListener('keydown', handleAgentShortcut)
+	}, [editor, revisionPrompt, isGenerating])
+
+	useEffect(() => {
+		function handleAgentPanelAction(event: Event) {
+			const action = readAgentPanelAction(event)
+			if (action === 'exportPng') void exportPng()
+			if (action === 'addPlaceholder') addPlaceholder()
+			if (action === 'generateRevision') void generateRevision()
+		}
+
+		window.addEventListener(LOCALART_AGENT_ACTION_EVENT, handleAgentPanelAction)
+		return () => window.removeEventListener(LOCALART_AGENT_ACTION_EVENT, handleAgentPanelAction)
 	}, [editor, revisionPrompt, isGenerating])
 
 	return (
