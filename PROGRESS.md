@@ -334,3 +334,5 @@ CI 打包态真实闭环复测（2026-06-23）：
 - 本机 `perl -e 'alarm 30; exec @ARGV' npx vitest run client/components/ChatPanel.test.tsx --config vitest.config.ts` 在 Vitest 启动阶段超时退出，未跑到断言；沿用当前已知本机 Vitest 挂起限制，以 focused bundle 与 GitHub CI 为准。
 - `npx esbuild client/agent-shortcuts.ts client/agent-shortcuts.test.ts client/components/ChatPanel.tsx client/components/ChatPanel.test.tsx --bundle --platform=node --format=esm --outdir=/tmp/localart-shortcuts-build --external:vitest --external:react --external:react-dom --external:tldraw`：通过。
 - `git diff --check`：通过。
+- GitHub CI `28051455896` 通过：`npm run build` 完成。
+- GitHub Desktop package `28051455890` 通过：macOS、Ubuntu、Windows 均完成 `npm test`、`npm run build`、`npm run make` 与 artifact 上传。
