@@ -317,3 +317,20 @@ CI 打包态真实闭环复测（2026-06-23）：
 - `git diff --check`：通过。
 - GitHub CI `28051047179` 通过：`npm run build` 完成。
 - GitHub Desktop package `28051047155` 通过：macOS、Ubuntu、Windows 均完成 `npm test`、`npm run build`、`npm run make` 与 artifact 上传。
+
+### M2 UI/UX 打磨 · Agent 快捷键（2026-06-24）
+
+已完成：
+
+- 新增快捷键 helper：`Cmd/Ctrl+Shift+P` 触发 PNG 导出，`Cmd/Ctrl+Shift+G` 触发生成修订版。
+- 快捷键会跳过 `input`、`textarea`、`select` 和 `contenteditable`，避免用户打字时误触。
+- LocalArt Agent 面板按钮显示快捷键提示。
+- 新增 helper 测试，覆盖快捷键匹配和输入区过滤。
+
+验证记录：
+
+- 红测：`npx esbuild client/agent-shortcuts.test.ts --bundle --platform=node --format=esm --outdir=/tmp/localart-shortcuts-red --external:vitest` 因缺少 `./agent-shortcuts` 失败，符合预期。
+- `npx esbuild client/agent-shortcuts.ts client/agent-shortcuts.test.ts --bundle --platform=node --format=esm --outdir=/tmp/localart-shortcuts-helper-build --external:vitest`：通过。
+- 本机 `perl -e 'alarm 30; exec @ARGV' npx vitest run client/components/ChatPanel.test.tsx --config vitest.config.ts` 在 Vitest 启动阶段超时退出，未跑到断言；沿用当前已知本机 Vitest 挂起限制，以 focused bundle 与 GitHub CI 为准。
+- `npx esbuild client/agent-shortcuts.ts client/agent-shortcuts.test.ts client/components/ChatPanel.tsx client/components/ChatPanel.test.tsx --bundle --platform=node --format=esm --outdir=/tmp/localart-shortcuts-build --external:vitest --external:react --external:react-dom --external:tldraw`：通过。
+- `git diff --check`：通过。
