@@ -163,4 +163,5 @@ tldraw SDK 可在开发环境使用；生产部署需要有效的 trial、commer
 - [`PROGRESS.md`](PROGRESS.md)：里程碑进度和复现步骤
 - [`docs/notes.md`](docs/notes.md)：M0 调研记录
 - [`docs/M2S1-验收交接.md`](docs/M2S1-验收交接.md)：Electron 壳验收清单、录屏步骤与 CI 证据
+- [`docs/M2-剩余人工验收清单.md`](docs/M2-剩余人工验收清单.md)：云模型 key、Windows/Linux GUI、签名和发布等人工项
 - [`docs/superpowers/specs/2026-06-23-model-provider-design.md`](docs/superpowers/specs/2026-06-23-model-provider-design.md)：统一模型 Provider 与主备路由设计
