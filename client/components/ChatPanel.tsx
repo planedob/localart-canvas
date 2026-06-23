@@ -49,6 +49,15 @@ export function CanvasExportLinks() {
 	</>
 }
 
+export function CanvasExportActions({ onExportPng }: { onExportPng: () => void }) {
+	return <>
+		<CanvasExportLinks />
+		<button type="button" onClick={onExportPng}>
+			Export PNG
+		</button>
+	</>
+}
+
 export function ChatPanel({ editor }: { editor: Editor }) {
 	const selectedShapes = useValue('local-chat-selection', () => editor.getSelectedShapes(), [
 		editor,
@@ -167,10 +176,7 @@ export function ChatPanel({ editor }: { editor: Editor }) {
 					<span>Primary → Backup</span>
 				</div>
 				<div className="local-chat-header-actions">
-					<CanvasExportLinks />
-					<button type="button" onClick={exportPng}>
-						Export PNG
-					</button>
+					<CanvasExportActions onExportPng={exportPng} />
 					<button type="button" onClick={addPlaceholder}>
 						Add AI placeholder
 					</button>

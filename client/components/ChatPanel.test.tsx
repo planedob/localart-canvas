@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, test } from 'vitest'
-import { CanvasExportLinks, ChatEntryView, ChatSubmitLabel } from './ChatPanel'
+import { CanvasExportActions, ChatEntryView, ChatSubmitLabel } from './ChatPanel'
 
 describe('chat route feedback', () => {
 	test('renders the actual backup model and fallback reason', () => {
@@ -19,7 +19,7 @@ describe('chat route feedback', () => {
 	})
 
 	test('renders canvas export links', () => {
-		const markup = renderToStaticMarkup(<CanvasExportLinks />)
+		const markup = renderToStaticMarkup(<CanvasExportActions onExportPng={() => undefined} />)
 
 		expect(markup).toContain('/api/export/canvas.json')
 		expect(markup).toContain('/api/export/canvas.zip')
