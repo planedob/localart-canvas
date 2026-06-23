@@ -11,9 +11,17 @@ interface PngExportEditor {
 	): Promise<{ blob: Blob }>
 }
 
+interface PngExportAnchor {
+	click(): void
+	download: string
+	href: string
+	remove(): void
+}
+
 interface PngExportEnvironment {
-	document?: Pick<Document, 'createElement'> & {
-		body: Pick<HTMLElement, 'append'>
+	document?: {
+		body: { append(anchor: PngExportAnchor): void }
+		createElement(tagName: 'a'): PngExportAnchor
 	}
 	url?: Pick<typeof URL, 'createObjectURL' | 'revokeObjectURL'>
 }
@@ -46,7 +54,7 @@ export async function downloadCanvasPng(
 	const targets = getPngExportTargets(editor)
 	const { blob } = await editor.toImage(targets, PNG_EXPORT_OPTIONS)
 	const objectUrl = urlApi.createObjectURL(blob)
-	const anchor = documentApi.createElement('a')
+	const anchor = documentApi.createElement('a') as PngExportAnchor
 
 	try {
 		anchor.href = objectUrl
