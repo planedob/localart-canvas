@@ -313,7 +313,7 @@ CI 打包态真实闭环复测（2026-06-23）：
 - 红测：`npx esbuild client/canvas-history.test.ts --bundle --platform=node --format=esm --outdir=/tmp/localart-history-ui-red --external:vitest` 因缺少 `./canvas-history` 失败，符合预期。
 - 红测：`npx esbuild client/components/HistoryPanel.test.tsx --bundle --platform=node --format=esm --outdir=/tmp/localart-history-panel-red --external:vitest --external:react --external:react-dom` 因缺少 `./HistoryPanel` 失败，符合预期。
 - `npx esbuild client/canvas-history.ts client/canvas-history.test.ts client/components/HistoryPanel.tsx client/components/HistoryPanel.test.tsx client/App.tsx --bundle --platform=node --format=esm --outdir=/tmp/localart-history-ui-build --external:vitest --external:react --external:react-dom --external:tldraw`：通过。
-
-待补充：
-
-- 等本次提交 push 后看 GitHub CI / Desktop package 三平台结果。
+- `npx esbuild client/canvas-history.ts client/canvas-history.test.ts client/components/HistoryPanel.tsx client/components/HistoryPanel.test.tsx client/App.tsx --bundle --platform=node --format=esm --outdir=/tmp/localart-history-ui-build-final --external:vitest --external:react --external:react-dom --external:tldraw`：通过。
+- `git diff --check`：通过。
+- GitHub CI `28051047179` 通过：`npm run build` 完成。
+- GitHub Desktop package `28051047155` 通过：macOS、Ubuntu、Windows 均完成 `npm test`、`npm run build`、`npm run make` 与 artifact 上传。
