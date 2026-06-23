@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, test } from 'vitest'
-import { CanvasExportActions, ChatEntryView, ChatSubmitLabel } from './ChatPanel'
+import { AgentActionButtons, ChatEntryView, ChatSubmitLabel } from './ChatPanel'
 
 describe('chat route feedback', () => {
 	test('renders the actual backup model and fallback reason', () => {
@@ -19,7 +19,15 @@ describe('chat route feedback', () => {
 	})
 
 	test('renders canvas export links', () => {
-		const markup = renderToStaticMarkup(<CanvasExportActions onExportPng={() => undefined} />)
+		const markup = renderToStaticMarkup(
+			<AgentActionButtons
+				canGenerateRevision
+				onAddPlaceholder={() => undefined}
+				onClearConversation={() => undefined}
+				onExportPng={() => undefined}
+				onGenerateRevision={() => undefined}
+			/>
+		)
 
 		expect(markup).toContain('/api/export/canvas.json')
 		expect(markup).toContain('/api/export/canvas.zip')
@@ -27,5 +35,8 @@ describe('chat route feedback', () => {
 		expect(markup).toContain('Export ZIP')
 		expect(markup).toContain('Export PNG')
 		expect(markup).toContain('⌘/Ctrl+Shift+P')
+		expect(markup).toContain('Add AI placeholder')
+		expect(markup).toContain('Generate revision')
+		expect(markup).toContain('⌘/Ctrl+Shift+G')
 	})
 })

@@ -60,6 +60,42 @@ export function CanvasExportActions({ onExportPng }: { onExportPng: () => void }
 	</>
 }
 
+export function AgentActionButtons({
+	canGenerateRevision,
+	isGenerating = false,
+	onAddPlaceholder,
+	onClearConversation,
+	onExportPng,
+	onGenerateRevision,
+}: {
+	canGenerateRevision: boolean
+	isGenerating?: boolean
+	onAddPlaceholder: () => void
+	onClearConversation?: () => void
+	onExportPng: () => void
+	onGenerateRevision: () => void
+}) {
+	return <>
+		<CanvasExportActions onExportPng={onExportPng} />
+		<button type="button" onClick={onAddPlaceholder}>
+			Add AI placeholder
+		</button>
+		<button
+			className="local-generate-button"
+			disabled={!canGenerateRevision || isGenerating}
+			onClick={onGenerateRevision}
+			type="button"
+		>
+			{isGenerating ? 'Generating…' : 'Generate revision · ⌘/Ctrl+Shift+G'}
+		</button>
+		{onClearConversation ? (
+			<button type="button" onClick={onClearConversation} aria-label="Clear conversation">
+				Clear
+			</button>
+		) : null}
+	</>
+}
+
 export function ChatPanel({ editor }: { editor: Editor }) {
 	const selectedShapes = useValue('local-chat-selection', () => editor.getSelectedShapes(), [
 		editor,
@@ -191,13 +227,14 @@ export function ChatPanel({ editor }: { editor: Editor }) {
 					<span>Primary → Backup</span>
 				</div>
 				<div className="local-chat-header-actions">
-					<CanvasExportActions onExportPng={exportPng} />
-					<button type="button" onClick={addPlaceholder}>
-						Add AI placeholder
-					</button>
-					<button type="button" onClick={() => setEntries([])} aria-label="Clear conversation">
-						Clear
-					</button>
+					<AgentActionButtons
+						canGenerateRevision={Boolean(revisionPrompt)}
+						isGenerating={isGenerating}
+						onAddPlaceholder={addPlaceholder}
+						onClearConversation={() => setEntries([])}
+						onExportPng={exportPng}
+						onGenerateRevision={() => void generateRevision()}
+					/>
 				</div>
 			</header>
 
@@ -223,14 +260,6 @@ export function ChatPanel({ editor }: { editor: Editor }) {
 				/>
 				<button disabled={!input.trim() || isSending}>
 					<ChatSubmitLabel isSending={isSending} />
-				</button>
-				<button
-					className="local-generate-button"
-					disabled={!revisionPrompt || isGenerating}
-					onClick={generateRevision}
-					type="button"
-				>
-					{isGenerating ? 'Generating…' : 'Generate revision · ⌘/Ctrl+Shift+G'}
 				</button>
 			</form>
 		</aside>
