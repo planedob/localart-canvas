@@ -255,3 +255,23 @@ CI 打包态真实闭环复测（2026-06-23）：
 
 - 本机当前 `vitest`、完整 `tsc`、以及动态 import `express` 会出现 0 输出/0 CPU 静默挂起；已中止，未作为失败结论。
 - 后续以 GitHub CI 的 `npm test`、`npm run build`、Desktop package 作为完整自动验证依据。
+
+### M2 导出 PNG（2026-06-24）
+
+已完成：
+
+- 右侧 LocalArt Agent 面板新增 `Export PNG`。
+- PNG 导出优先使用当前选中形状；无选中时导出当前页面全部形状。
+- 空画布导出时在 Agent 面板显示错误：`There are no canvas shapes to export`。
+- PNG 下载名为 `localart-canvas.png`，使用 tldraw `editor.toImage()`，配置为 PNG、带背景、16px padding、2x pixel ratio。
+- 新增 `client/png-export.ts` 与测试，覆盖目标选择、空画布错误、blob 下载流程和面板按钮渲染。
+
+验证记录：
+
+- `npx esbuild client/png-export.ts client/png-export.test.ts client/components/ChatPanel.tsx client/components/ChatPanel.test.tsx --bundle --platform=node --format=esm --outdir=/tmp/localart-png-build --external:vitest --external:react --external:react-dom --external:tldraw`：通过。
+- GitHub CI `28048456275` 通过：`npm run build` 完成。
+- GitHub Desktop package `28048456564` 通过：macOS、Ubuntu、Windows 均完成 `npm test`、`npm run build`、`npm run make` 与 artifact 上传。
+
+本机验证限制：
+
+- 本机 `npm run typecheck` 仍在 TypeScript 阶段静默挂起，已中止；以 GitHub CI / Desktop package 为完整验证依据。
