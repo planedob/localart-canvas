@@ -26,5 +26,6 @@ describe('chat route feedback', () => {
 		expect(markup).toContain('Export JSON')
 		expect(markup).toContain('Export ZIP')
 		expect(markup).toContain('Export PNG')
+		expect(markup).toContain('⌘/Ctrl+Shift+P')
 	})
 })

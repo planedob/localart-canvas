@@ -1,5 +1,6 @@
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { createShapeId, Editor, FileHelpers, useValue } from 'tldraw'
+import { getAgentShortcutAction } from '../agent-shortcuts'
 import { getCanvasExportFilename, getCanvasExportUrl } from '../export-api'
 import { requestGeneration, requestLocalChat } from '../local-api'
 import { downloadCanvasPng } from '../png-export'
@@ -53,7 +54,8 @@ export function CanvasExportActions({ onExportPng }: { onExportPng: () => void }
 	return <>
 		<CanvasExportLinks />
 		<button type="button" onClick={onExportPng}>
-			Export PNG
+			<span>Export PNG</span>
+			<small>⌘/Ctrl+Shift+P</small>
 		</button>
 	</>
 }
@@ -168,6 +170,19 @@ export function ChatPanel({ editor }: { editor: Editor }) {
 		}
 	}
 
+	useEffect(() => {
+		function handleAgentShortcut(event: KeyboardEvent) {
+			const action = getAgentShortcutAction(event)
+			if (!action) return
+			event.preventDefault()
+			if (action === 'exportPng') void exportPng()
+			if (action === 'generateRevision') void generateRevision()
+		}
+
+		document.addEventListener('keydown', handleAgentShortcut)
+		return () => document.removeEventListener('keydown', handleAgentShortcut)
+	}, [editor, revisionPrompt, isGenerating])
+
 	return (
 		<aside className="chat-panel local-chat-panel tl-theme__dark">
 			<header className="local-chat-header">
@@ -215,7 +230,7 @@ export function ChatPanel({ editor }: { editor: Editor }) {
 					onClick={generateRevision}
 					type="button"
 				>
-					{isGenerating ? 'Generating…' : 'Generate revision'}
+					{isGenerating ? 'Generating…' : 'Generate revision · ⌘/Ctrl+Shift+G'}
 				</button>
 			</form>
 		</aside>
