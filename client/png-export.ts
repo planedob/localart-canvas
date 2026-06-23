@@ -49,20 +49,29 @@ export async function downloadCanvasPng(
 	editor: PngExportEditor,
 	environment: PngExportEnvironment = {}
 ): Promise<void> {
-	const documentApi = environment.document ?? document
 	const urlApi = environment.url ?? URL
 	const targets = getPngExportTargets(editor)
 	const { blob } = await editor.toImage(targets, PNG_EXPORT_OPTIONS)
 	const objectUrl = urlApi.createObjectURL(blob)
-	const anchor = documentApi.createElement('a') as PngExportAnchor
 
 	try {
+		if (environment.document) {
+			const anchor = environment.document.createElement('a')
+			anchor.href = objectUrl
+			anchor.download = PNG_EXPORT_FILENAME
+			environment.document.body.append(anchor)
+			anchor.click()
+			anchor.remove()
+			return
+		}
+
+		const anchor = document.createElement('a')
 		anchor.href = objectUrl
 		anchor.download = PNG_EXPORT_FILENAME
-		documentApi.body.append(anchor)
+		document.body.append(anchor)
 		anchor.click()
-	} finally {
 		anchor.remove()
+	} finally {
 		urlApi.revokeObjectURL(objectUrl)
 	}
 }
