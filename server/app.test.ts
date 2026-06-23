@@ -1,8 +1,8 @@
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
-import { IncomingMessage } from 'node:http'
 import os from 'node:os'
 import path from 'node:path'
 import request from 'supertest'
+import type SuperAgentResponse from 'superagent/lib/node/response'
 import { describe, expect, it, vi } from 'vitest'
 import { createApp } from './app'
 import { RuntimeConfig } from './config'
@@ -21,7 +21,7 @@ const config: RuntimeConfig = {
 }
 
 function parseBinaryResponse(
-	response: IncomingMessage,
+	response: SuperAgentResponse,
 	callback: (error: Error | null, body?: Buffer) => void
 ): void {
 	const chunks: Buffer[] = []
