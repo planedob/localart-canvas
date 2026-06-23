@@ -161,6 +161,44 @@ describe('canvas state API', () => {
 	})
 })
 
+describe('canvas history API', () => {
+	it('lists canvas versions newest first', async () => {
+		const versions = [
+			{ id: 'v2', createdAt: '2026-06-24T02:00:00.000Z' },
+			{ id: 'v1', createdAt: '2026-06-24T01:00:00.000Z' },
+		]
+		const canvasStore = {
+			read: vi.fn(async () => null),
+			write: vi.fn(async () => undefined),
+			listVersions: vi.fn(async () => versions),
+			restoreVersion: vi.fn(),
+		}
+		const app = createApp(config, vi.fn(), { canvasStore })
+
+		const response = await request(app).get('/api/canvas/versions')
+
+		expect(response.status).toBe(200)
+		expect(response.body).toEqual({ versions })
+	})
+
+	it('restores a canvas version', async () => {
+		const restoredDocument = { store: { restored: true } }
+		const canvasStore = {
+			read: vi.fn(async () => null),
+			write: vi.fn(async () => undefined),
+			listVersions: vi.fn(async () => []),
+			restoreVersion: vi.fn(async () => restoredDocument),
+		}
+		const app = createApp(config, vi.fn(), { canvasStore })
+
+		const response = await request(app).post('/api/canvas/versions/v1/restore')
+
+		expect(response.status).toBe(200)
+		expect(response.body).toEqual({ document: restoredDocument })
+		expect(canvasStore.restoreVersion).toHaveBeenCalledWith('v1')
+	})
+})
+
 describe('canvas export API', () => {
 	it('exports the current canvas document as downloadable JSON', async () => {
 		const canvasStore = {

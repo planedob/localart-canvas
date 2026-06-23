@@ -18,6 +18,8 @@ type ImageGenerationService = {
 type CanvasDocumentStore = {
 	read(): Promise<unknown | null>
 	write(document: unknown): Promise<void>
+	listVersions?(): Promise<Array<{ id: string; createdAt: string }>>
+	restoreVersion?(id: string): Promise<unknown>
 }
 type ModelRoutingServiceLike = {
 	chat(request: LocalChatRequest): Promise<RoutedChatResponse>
@@ -191,6 +193,38 @@ export function createApp(
 			response.status(500).json({
 				error: error instanceof Error ? error.message : 'Canvas state could not be saved',
 			})
+		}
+	})
+
+	app.get('/api/canvas/versions', async (_request, response) => {
+		if (!canvasStore.listVersions) {
+			response.status(503).json({ error: 'Canvas history is unavailable' })
+			return
+		}
+		try {
+			response.json({ versions: await canvasStore.listVersions() })
+		} catch (error) {
+			response.status(500).json({
+				error: error instanceof Error ? error.message : 'Canvas versions could not be read',
+			})
+		}
+	})
+
+	app.post('/api/canvas/versions/:id/restore', async (request, response) => {
+		if (!canvasStore.restoreVersion) {
+			response.status(503).json({ error: 'Canvas history is unavailable' })
+			return
+		}
+		const versionId = request.params.id
+		if (!versionId) {
+			response.status(400).json({ error: 'Canvas version id is required' })
+			return
+		}
+		try {
+			response.json({ document: await canvasStore.restoreVersion(versionId) })
+		} catch (error) {
+			const message = error instanceof Error ? error.message : 'Canvas version could not be restored'
+			response.status(message.includes('ENOENT') ? 404 : 500).json({ error: message })
 		}
 	})
 

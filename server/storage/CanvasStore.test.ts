@@ -25,6 +25,56 @@ describe('CanvasStore', () => {
 		)
 	})
 
+	it('snapshots the previous document when writing a new version', async () => {
+		const directory = await mkdtemp(path.join(os.tmpdir(), 'localart-store-'))
+		const store = new CanvasStore(directory, {
+			createVersionId: () => 'version-1',
+			now: () => new Date('2026-06-24T01:02:03.004Z'),
+		})
+		const firstDocument = { store: { first: true } }
+		const secondDocument = { store: { second: true } }
+
+		await store.write(firstDocument)
+		await store.write(secondDocument)
+
+		const versions = await store.listVersions()
+		expect(versions).toEqual([
+			{
+				id: '2026-06-24T01-02-03-004Z-version-1',
+				createdAt: '2026-06-24T01:02:03.004Z',
+			},
+		])
+		await expect(store.readVersion(versions[0].id)).resolves.toEqual(firstDocument)
+	})
+
+	it('restores a saved version as the current document', async () => {
+		const directory = await mkdtemp(path.join(os.tmpdir(), 'localart-store-'))
+		const store = new CanvasStore(directory, {
+			createVersionId: () => 'version-1',
+			now: () => new Date('2026-06-24T01:02:03.004Z'),
+		})
+		const firstDocument = { store: { first: true } }
+		const secondDocument = { store: { second: true } }
+
+		await store.write(firstDocument)
+		await store.write(secondDocument)
+		const [{ id }] = await store.listVersions()
+
+		await expect(store.restoreVersion(id)).resolves.toEqual(firstDocument)
+		await expect(store.read()).resolves.toEqual(firstDocument)
+	})
+
+	it('does not create duplicate versions for identical writes', async () => {
+		const directory = await mkdtemp(path.join(os.tmpdir(), 'localart-store-'))
+		const store = new CanvasStore(directory)
+		const document = { store: { same: true } }
+
+		await store.write(document)
+		await store.write(document)
+
+		await expect(store.listVersions()).resolves.toEqual([])
+	})
+
 	it('recovers from corrupt JSON and reports the problem', async () => {
 		const directory = await mkdtemp(path.join(os.tmpdir(), 'localart-store-'))
 		await writeFile(path.join(directory, 'document.json'), '{broken')
