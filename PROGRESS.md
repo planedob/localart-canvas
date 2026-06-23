@@ -248,6 +248,8 @@ CI 打包态真实闭环复测（2026-06-23）：
 - `npx tsx -e "import { createStoredZipArchive } from './server/export/zip.ts'; ..."`：通过，生成 ZIP 包并确认包含 `document.json`、`assets/a.txt` 和文件内容。
 - `npx esbuild server/app.ts client/export-api.ts client/components/ChatPanel.tsx --bundle --platform=node --format=esm --outdir=/tmp/localart-export-build --external:react --external:react-dom --external:tldraw`：通过。
 - `npx esbuild server/export/zip.test.ts server/app.test.ts client/export-api.test.ts client/components/ChatPanel.test.tsx --bundle --platform=node --format=esm --outdir=/tmp/localart-export-test-build --external:vitest --external:supertest --external:react --external:react-dom --external:tldraw`：通过。
+- GitHub CI `28020071432` 通过：`npm run build` 完成。
+- GitHub Desktop package `28020071557` 通过：macOS、Ubuntu、Windows 均完成 `npm test`、`npm run build`、`npm run make` 与 artifact 上传。
 
 本机验证限制：
 
