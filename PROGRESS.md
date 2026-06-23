@@ -214,4 +214,6 @@ macOS 打包态实测（2026-06-23）：
 - 已将前端生成后落图逻辑抽成 `insertGeneratedRevisionShape()`，避免该路径只能靠 GUI 验证。
 - 新增 `client/revision-shape.test.ts`，覆盖“生成资产 URL → 创建 `AIImageHolder` → 放到源选区右侧 → 选中新 shape”。
 - `npx vitest run client/revision-shape.test.ts --pool=forks --maxWorkers=1`：1 个测试文件、1 项通过。
-- 受当前机器低内存/I/O 状态影响，包含 tldraw runtime 的更大测试组与 `npx vite build` 仍会在启动/transform 阶段挂住；未记录为通过。
+- GitHub CI `27994101572` 通过：测试、Vite build、desktop bundle、typecheck 均完成。
+- GitHub Desktop package `27994101569` 通过：macOS、Ubuntu、Windows 打包任务完成。
+- 本机仍处于低内存/I/O 状态，包含 tldraw runtime 的更大本地测试组与 `npx vite build` 会在启动/transform 阶段挂住；以 GitHub Actions 结果作为本轮完整自动验证依据。
