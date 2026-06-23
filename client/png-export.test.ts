@@ -4,10 +4,11 @@ import {
 	getPngExportTargets,
 	PNG_EXPORT_FILENAME,
 	PNG_EXPORT_OPTIONS,
+	PngExportShape,
 } from './png-export'
 
-function createShape(id: string) {
-	return { id, type: 'geo', props: {} }
+function createShape(id: string): PngExportShape {
+	return { id, type: 'geo', props: {} } as unknown as PngExportShape
 }
 
 describe('getPngExportTargets', () => {

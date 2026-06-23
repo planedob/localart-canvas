@@ -1,12 +1,12 @@
 import { Editor } from 'tldraw'
 
-type ExportableShape = ReturnType<Editor['getSelectedShapes']>[number]
+export type PngExportShape = ReturnType<Editor['getSelectedShapes']>[number]
 
 interface PngExportEditor {
-	getSelectedShapes(): ExportableShape[]
-	getCurrentPageShapes(): ExportableShape[]
+	getSelectedShapes(): PngExportShape[]
+	getCurrentPageShapes(): PngExportShape[]
 	toImage(
-		shapes: ExportableShape[],
+		shapes: PngExportShape[],
 		options: typeof PNG_EXPORT_OPTIONS
 	): Promise<{ blob: Blob }>
 }
