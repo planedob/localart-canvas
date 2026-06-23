@@ -3,6 +3,7 @@ import { DefaultSizeStyle, Editor, ErrorBoundary, TLComponents, Tldraw, TldrawUi
 import { ChatPanel } from './components/ChatPanel'
 import { ChatPanelFallback } from './components/ChatPanelFallback'
 import { CanvasPersistence } from './components/CanvasPersistence'
+import { HistoryPanel } from './components/HistoryPanel'
 import { ServiceStatus } from './components/ServiceStatus'
 import { ModelRoutingPanel } from './components/ModelRoutingPanel'
 import { AIImageHolderShapeUtil } from './shapes/AIImageHolderShape'
@@ -35,6 +36,7 @@ function App() {
 				<div className="localart-sidebar">
 					<ServiceStatus />
 					<ModelRoutingPanel />
+					{editor && <HistoryPanel editor={editor} />}
 					<ErrorBoundary fallback={ChatPanelFallback}>
 						{editor && <ChatPanel editor={editor} />}
 					</ErrorBoundary>

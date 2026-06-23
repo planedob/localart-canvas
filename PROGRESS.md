@@ -297,3 +297,23 @@ CI 打包态真实闭环复测（2026-06-23）：
 未完成：
 
 - 前端历史列表/恢复 UI 尚未接入；当前能力可通过本地 API 使用。
+
+### M2 历史版本回溯 · 前端 UI（2026-06-24）
+
+已完成：
+
+- 新增 `client/canvas-history.ts`：封装 `GET /api/canvas/versions` 与 `POST /api/canvas/versions/:id/restore`。
+- 新增右侧栏 `Canvas History` 面板，位置在模型路由面板和 LocalArt Agent 面板之间。
+- 面板支持刷新版本列表、显示空状态/加载状态/错误状态。
+- 每个版本显示创建时间和版本 id，点击 `Restore` 后调用后端恢复，并立刻 `editor.loadSnapshot(document)` 刷新当前画布。
+- 新增 API 客户端和面板渲染测试。
+
+验证记录：
+
+- 红测：`npx esbuild client/canvas-history.test.ts --bundle --platform=node --format=esm --outdir=/tmp/localart-history-ui-red --external:vitest` 因缺少 `./canvas-history` 失败，符合预期。
+- 红测：`npx esbuild client/components/HistoryPanel.test.tsx --bundle --platform=node --format=esm --outdir=/tmp/localart-history-panel-red --external:vitest --external:react --external:react-dom` 因缺少 `./HistoryPanel` 失败，符合预期。
+- `npx esbuild client/canvas-history.ts client/canvas-history.test.ts client/components/HistoryPanel.tsx client/components/HistoryPanel.test.tsx client/App.tsx --bundle --platform=node --format=esm --outdir=/tmp/localart-history-ui-build --external:vitest --external:react --external:react-dom --external:tldraw`：通过。
+
+待补充：
+
+- 等本次提交 push 后看 GitHub CI / Desktop package 三平台结果。
