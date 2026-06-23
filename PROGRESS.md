@@ -217,3 +217,18 @@ macOS 打包态实测（2026-06-23）：
 - GitHub CI `27994101572` 通过：测试、Vite build、desktop bundle、typecheck 均完成。
 - GitHub Desktop package `27994101569` 通过：macOS、Ubuntu、Windows 打包任务完成。
 - 本机仍处于低内存/I/O 状态，包含 tldraw runtime 的更大本地测试组与 `npx vite build` 会在启动/transform 阶段挂住；以 GitHub Actions 结果作为本轮完整自动验证依据。
+
+CI 打包态真实闭环复测（2026-06-23）：
+
+- 下载 GitHub Desktop package `27994317890` 的 `localart-canvas-macos-latest` artifact，并解压运行其中的 `LocalArt Canvas.app`。
+- 使用临时画布目录 `LOCALART_CANVAS_DIR=/tmp/localart-ci-canvas`、本机 Ollama `gemma3:4b`、本机 ComfyUI Flux.2 klein workflow。
+- 通过 Electron remote debugging 在打包窗口中填写修订请求：`Return only this image prompt: a clean minimalist green triangle centered on a warm white background, no text`。
+- Ollama 返回干净 prompt：`a clean minimalist green triangle centered on a warm white background, no text`。
+- 点击 `Generate revision` 后，ComfyUI 执行完成：`Prompt executed in 67.16 seconds`。
+- 打包 app DOM 中出现 1 个 `data-testid="ai-image-holder"`，图片为 `/assets/0c4676be-6a64-48b7-a65c-ce8b981f4900.png`，alt/prompt 为上述 green triangle prompt。
+- `/tmp/localart-ci-canvas/assets/0c4676be-6a64-48b7-a65c-ce8b981f4900.png` 已生成，`/tmp/localart-ci-canvas/document.json` 已写入对应 `ai-image-holder` 与 `assetUrl`。
+- 退出并重启同一个 CI 打包 app 后，DOM 仍恢复出同一个 `AIImageHolder` 和 asset URL，确认打包态落图与持久化恢复通过。
+
+开发态复测注意：
+
+- `npm run dev:desktop` 期间 Vite 多次误判源文件变化并 HMR/reload，导致生成请求被打断；该 dev-only 热更新干扰不作为产品闭环失败结论。
