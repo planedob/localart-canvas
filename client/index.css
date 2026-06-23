@@ -429,12 +429,15 @@ body {
 }
 
 .local-chat-header button,
+.local-chat-header a,
 .local-chat-form button {
 	border: 0;
 	border-radius: 8px;
 	background: #52525b;
 	color: white;
 	padding: 8px 10px;
+	text-decoration: none;
+	font-size: 13px;
 }
 
 .local-chat-history {

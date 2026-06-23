@@ -1,7 +1,9 @@
 import express from 'express'
+import { readdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { RuntimeConfig } from './config'
 import { StoredGeneration } from './comfy/GenerationService'
+import { createStoredZipArchive, ZipEntry } from './export/zip'
 import { LocalChatRequest, LocalChatResponse, OllamaClient } from './ollama/OllamaClient'
 import { CanvasStore } from './storage/CanvasStore'
 import { ModelSlotName, RoutedChatResponse, RoutingConfigUpdate, SanitizedRoutingConfig } from './model/types'
@@ -192,5 +194,70 @@ export function createApp(
 		}
 	})
 
+	app.get('/api/export/canvas.json', async (_request, response) => {
+		try {
+			const document = await canvasStore.read()
+			response
+				.type('application/json')
+				.attachment('localart-canvas.json')
+				.send(`${JSON.stringify(document, null, 2)}\n`)
+		} catch (error) {
+			response.status(500).json({
+				error: error instanceof Error ? error.message : 'Canvas JSON export failed',
+			})
+		}
+	})
+
+	app.get('/api/export/canvas.zip', async (_request, response) => {
+		try {
+			const document = await canvasStore.read()
+			const entries: ZipEntry[] = [
+				{ path: 'document.json', data: `${JSON.stringify(document, null, 2)}\n` },
+				...(await readAssetEntries(path.join(config.canvasDirectory, 'assets'))),
+			]
+			const archive = createStoredZipArchive(entries)
+			response
+				.type('application/zip')
+				.attachment('localart-canvas.zip')
+				.set('Content-Length', String(archive.length))
+				.send(archive)
+		} catch (error) {
+			response.status(500).json({
+				error: error instanceof Error ? error.message : 'Canvas ZIP export failed',
+			})
+		}
+	})
+
 	return app
+}
+
+async function readAssetEntries(assetsDirectory: string): Promise<ZipEntry[]> {
+	return readAssetEntriesFrom(assetsDirectory, assetsDirectory)
+}
+
+async function readAssetEntriesFrom(rootDirectory: string, currentDirectory: string): Promise<ZipEntry[]> {
+	let entries: ZipEntry[] = []
+	let directoryEntries
+	try {
+		directoryEntries = await readdir(currentDirectory, { withFileTypes: true })
+	} catch (error) {
+		if ((error as NodeJS.ErrnoException).code === 'ENOENT') return []
+		throw error
+	}
+
+	for (const directoryEntry of directoryEntries) {
+		const absolutePath = path.join(currentDirectory, directoryEntry.name)
+		if (directoryEntry.isDirectory()) {
+			entries = entries.concat(await readAssetEntriesFrom(rootDirectory, absolutePath))
+			continue
+		}
+		if (!directoryEntry.isFile()) continue
+		const relativePath = path.relative(rootDirectory, absolutePath).split(path.sep).join('/')
+		entries.push({
+			path: `assets/${relativePath}`,
+			data: await readFile(absolutePath),
+		})
+	}
+
+	return entries
 }

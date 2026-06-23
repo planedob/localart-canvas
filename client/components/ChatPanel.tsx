@@ -1,5 +1,6 @@
 import { FormEvent, useState } from 'react'
 import { createShapeId, Editor, FileHelpers, useValue } from 'tldraw'
+import { getCanvasExportFilename, getCanvasExportUrl } from '../export-api'
 import { requestGeneration, requestLocalChat } from '../local-api'
 import { summarizeSelectedShapes } from '../revision-context'
 import { insertGeneratedRevisionShape } from '../revision-shape'
@@ -34,6 +35,17 @@ export function ChatEntryView({ entry }: { entry: ChatEntry }) {
 
 export function ChatSubmitLabel({ isSending }: { isSending: boolean }) {
 	return <>{isSending ? 'Thinking…' : 'Send to model'}</>
+}
+
+export function CanvasExportLinks() {
+	return <>
+		<a download={getCanvasExportFilename('json')} href={getCanvasExportUrl('json')}>
+			Export JSON
+		</a>
+		<a download={getCanvasExportFilename('zip')} href={getCanvasExportUrl('zip')}>
+			Export ZIP
+		</a>
+	</>
 }
 
 export function ChatPanel({ editor }: { editor: Editor }) {
@@ -140,6 +152,7 @@ export function ChatPanel({ editor }: { editor: Editor }) {
 					<span>Primary → Backup</span>
 				</div>
 				<div className="local-chat-header-actions">
+					<CanvasExportLinks />
 					<button type="button" onClick={addPlaceholder}>
 						Add AI placeholder
 					</button>

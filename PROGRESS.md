@@ -232,3 +232,24 @@ CI 打包态真实闭环复测（2026-06-23）：
 开发态复测注意：
 
 - `npm run dev:desktop` 期间 Vite 多次误判源文件变化并 HMR/reload，导致生成请求被打断；该 dev-only 热更新干扰不作为产品闭环失败结论。
+
+### M2 导出 JSON / ZIP（2026-06-23）
+
+已完成：
+
+- 新增 `GET /api/export/canvas.json`，导出当前画布文档，下载名为 `localart-canvas.json`。
+- 新增 `GET /api/export/canvas.zip`，导出 `document.json` 与 `canvas/assets/` 下的本地资产，下载名为 `localart-canvas.zip`。
+- ZIP 使用内置无压缩 stored 格式生成，包含 CRC32 与路径安全检查，不新增运行时依赖。
+- 右侧 LocalArt Agent 面板新增 `Export JSON` / `Export ZIP` 下载入口。
+- 新增服务端、ZIP 生成器、前端导出 URL 与面板渲染测试。
+
+验证记录：
+
+- `npx tsx -e "import { createStoredZipArchive } from './server/export/zip.ts'; ..."`：通过，生成 ZIP 包并确认包含 `document.json`、`assets/a.txt` 和文件内容。
+- `npx esbuild server/app.ts client/export-api.ts client/components/ChatPanel.tsx --bundle --platform=node --format=esm --outdir=/tmp/localart-export-build --external:react --external:react-dom --external:tldraw`：通过。
+- `npx esbuild server/export/zip.test.ts server/app.test.ts client/export-api.test.ts client/components/ChatPanel.test.tsx --bundle --platform=node --format=esm --outdir=/tmp/localart-export-test-build --external:vitest --external:supertest --external:react --external:react-dom --external:tldraw`：通过。
+
+本机验证限制：
+
+- 本机当前 `vitest`、完整 `tsc`、以及动态 import `express` 会出现 0 输出/0 CPU 静默挂起；已中止，未作为失败结论。
+- 后续以 GitHub CI 的 `npm test`、`npm run build`、Desktop package 作为完整自动验证依据。

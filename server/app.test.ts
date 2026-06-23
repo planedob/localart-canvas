@@ -1,3 +1,6 @@
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
+import os from 'node:os'
+import path from 'node:path'
 import request from 'supertest'
 import { describe, expect, it, vi } from 'vitest'
 import { createApp } from './app'
@@ -144,5 +147,51 @@ describe('canvas state API', () => {
 		expect(readResponse.body).toEqual({ document: { store: { existing: true } } })
 		expect(writeResponse.status).toBe(204)
 		expect(canvasStore.write).toHaveBeenCalledWith({ store: { next: true } })
+	})
+})
+
+describe('canvas export API', () => {
+	it('exports the current canvas document as downloadable JSON', async () => {
+		const canvasStore = {
+			read: vi.fn(async () => ({ store: { existing: true } })),
+			write: vi.fn(async () => undefined),
+		}
+		const app = createApp(config, vi.fn(), { canvasStore })
+
+		const response = await request(app).get('/api/export/canvas.json')
+
+		expect(response.status).toBe(200)
+		expect(response.headers['content-type']).toContain('application/json')
+		expect(response.headers['content-disposition']).toContain('localart-canvas.json')
+		expect(response.body).toEqual({ store: { existing: true } })
+	})
+
+	it('exports document.json and local assets as a downloadable ZIP', async () => {
+		const temporaryDirectory = await mkdtemp(path.join(os.tmpdir(), 'localart-export-'))
+		try {
+			await mkdir(path.join(temporaryDirectory, 'assets'), { recursive: true })
+			await writeFile(path.join(temporaryDirectory, 'assets', 'generated.png'), 'fake-png')
+			const canvasStore = {
+				read: vi.fn(async () => ({ store: { existing: true } })),
+				write: vi.fn(async () => undefined),
+			}
+			const app = createApp(
+				{ ...config, canvasDirectory: temporaryDirectory },
+				vi.fn(),
+				{ canvasStore }
+			)
+
+			const response = await request(app).get('/api/export/canvas.zip')
+
+			expect(response.status).toBe(200)
+			expect(response.headers['content-type']).toContain('application/zip')
+			expect(response.headers['content-disposition']).toContain('localart-canvas.zip')
+			expect(Buffer.isBuffer(response.body)).toBe(true)
+			expect(response.body.indexOf(Buffer.from('document.json'))).toBeGreaterThanOrEqual(0)
+			expect(response.body.indexOf(Buffer.from('assets/generated.png'))).toBeGreaterThanOrEqual(0)
+			expect(response.body.indexOf(Buffer.from('fake-png'))).toBeGreaterThanOrEqual(0)
+		} finally {
+			await rm(temporaryDirectory, { recursive: true, force: true })
+		}
 	})
 })
