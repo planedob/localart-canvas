@@ -208,3 +208,10 @@ macOS 打包态实测（2026-06-23）：
 - in-app Browser 在生成后触发 URL policy 拦截，阻止继续读取 DOM/console；未绕过该安全策略。
 - `canvas/document.json` 未出现本次新资产 `c07536ec-cbe4-4b28-a7d3-a9b6ad5eda98.png` 对应的 `AIImageHolder` 引用，因此这次只确认到“Comfy 返回结果并保存资产”，未确认“前端新图落画布并 autosave”。后续需在可继续操作的浏览器/Electron 窗口中复测 UI 落图，或补一个可注入 editor/mock 的 `ChatPanel.generateRevision` 回归测试。
 - 本机本轮 `npm run typecheck`/`npm run build` 在 TypeScript 阶段出现 0 CPU 静默挂起；专项测试与全量 Vitest 已通过，TypeScript 验证需重跑获得明确退出码后才能作为通过项记录。
+
+后续补充：
+
+- 已将前端生成后落图逻辑抽成 `insertGeneratedRevisionShape()`，避免该路径只能靠 GUI 验证。
+- 新增 `client/revision-shape.test.ts`，覆盖“生成资产 URL → 创建 `AIImageHolder` → 放到源选区右侧 → 选中新 shape”。
+- `npx vitest run client/revision-shape.test.ts --pool=forks --maxWorkers=1`：1 个测试文件、1 项通过。
+- 受当前机器低内存/I/O 状态影响，包含 tldraw runtime 的更大测试组与 `npx vite build` 仍会在启动/transform 阶段挂住；未记录为通过。

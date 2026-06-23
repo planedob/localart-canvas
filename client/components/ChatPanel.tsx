@@ -1,7 +1,8 @@
 import { FormEvent, useState } from 'react'
 import { createShapeId, Editor, FileHelpers, useValue } from 'tldraw'
 import { requestGeneration, requestLocalChat } from '../local-api'
-import { getRevisionPlacement, summarizeSelectedShapes } from '../revision-context'
+import { summarizeSelectedShapes } from '../revision-context'
+import { insertGeneratedRevisionShape } from '../revision-shape'
 import {
 	AI_IMAGE_HOLDER_DEFAULT_PROPS,
 	AI_IMAGE_HOLDER_TYPE,
@@ -101,25 +102,7 @@ export function ChatPanel({ editor }: { editor: Editor }) {
 		setIsGenerating(true)
 		try {
 			const generation = await requestGeneration(revisionPrompt)
-			const sourceBounds = editor.getSelectionPageBounds()
-			const placement = getRevisionPlacement(
-				sourceBounds,
-				AI_IMAGE_HOLDER_DEFAULT_PROPS,
-				editor.getViewportPageBounds()
-			)
-			const id = createShapeId()
-			editor.createShape<AIImageHolderShape>({
-				id,
-				type: AI_IMAGE_HOLDER_TYPE,
-				x: placement.x,
-				y: placement.y,
-				props: {
-					...AI_IMAGE_HOLDER_DEFAULT_PROPS,
-					assetUrl: generation.url,
-					prompt: revisionPrompt,
-				},
-			})
-			editor.select(id)
+			insertGeneratedRevisionShape(editor, generation, revisionPrompt, createShapeId)
 		} catch (error) {
 			setEntries((current) => [
 				...current,

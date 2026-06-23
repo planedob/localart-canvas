@@ -5,16 +5,11 @@ import {
 	T,
 	TLBaseShape,
 } from 'tldraw'
-
-export const AI_IMAGE_HOLDER_TYPE = 'ai-image-holder' as const
-
-export interface AIImageHolderProps {
-	w: number
-	h: number
-	assetUrl: string
-	prompt: string
-	status: 'ready' | 'error'
-}
+import {
+	AI_IMAGE_HOLDER_DEFAULT_PROPS,
+	AI_IMAGE_HOLDER_TYPE,
+	AIImageHolderProps,
+} from './ai-image-holder-model'
 
 export type AIImageHolderShape = TLBaseShape<
 	typeof AI_IMAGE_HOLDER_TYPE,
@@ -27,13 +22,7 @@ declare module '@tldraw/tlschema' {
 	}
 }
 
-export const AI_IMAGE_HOLDER_DEFAULT_PROPS: AIImageHolderProps = {
-	w: 512,
-	h: 512,
-	assetUrl: '',
-	prompt: '',
-	status: 'ready',
-}
+export { AI_IMAGE_HOLDER_DEFAULT_PROPS, AI_IMAGE_HOLDER_TYPE }
 
 export function getAIImageHolderGeometry(props: Pick<AIImageHolderProps, 'w' | 'h'>) {
 	return new Rectangle2d({
