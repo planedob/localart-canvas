@@ -147,6 +147,12 @@ LOCALART_BACKUP_API_KEY=your-api-key
 
 右侧 `Canvas History` 面板会列出自动保存产生的历史版本。点击 `Restore` 会把对应版本恢复到当前画布，并立即刷新 tldraw 视图。首次保存不会产生历史版本；只有覆盖已有画布文档时才会记录旧版本。
 
+画布右键菜单保留 tldraw 默认操作，并追加 `LocalArt` 分组：
+
+- `Export selection PNG`
+- `Add AI placeholder`
+- `Generate revision`
+
 ## tldraw 许可证
 
 tldraw SDK 可在开发环境使用；生产部署需要有效的 trial、commercial 或 hobby license key，并通过 `VITE_TLDRAW_LICENSE_KEY` 注入。水印显示由许可证类型控制，本项目不会通过 CSS 或修改 SDK 绕过许可证机制。

@@ -336,3 +336,19 @@ CI 打包态真实闭环复测（2026-06-23）：
 - `git diff --check`：通过。
 - GitHub CI `28051455896` 通过：`npm run build` 完成。
 - GitHub Desktop package `28051455890` 通过：macOS、Ubuntu、Windows 均完成 `npm test`、`npm run build`、`npm run make` 与 artifact 上传。
+
+### M2 UI/UX 打磨 · LocalArt 右键菜单（2026-06-24）
+
+已完成：
+
+- 新增 `LocalArtContextMenu`，保留 tldraw 默认右键菜单，并追加 `LocalArt` 分组。
+- 右键菜单新增 `Export selection PNG`、`Add AI placeholder`、`Generate revision`。
+- 新增 `localart:agent-action` 浏览器事件通道，右键菜单把动作交给现有 `ChatPanel` 执行，复用现有导出、占位图、生成修订版和错误展示逻辑。
+- README 已补充右键菜单说明。
+
+验证记录：
+
+- 红测：`npx esbuild client/components/LocalArtContextMenu.test.tsx --bundle --platform=node --format=esm --outdir=/tmp/localart-context-menu-red --external:vitest --external:react --external:react-dom --external:tldraw` 因缺少 `./LocalArtContextMenu` 失败，符合预期。
+- `npx esbuild client/components/ChatPanel.tsx client/components/ChatPanel.test.tsx --bundle --platform=node --format=esm --outdir=/tmp/localart-context-actions-build --external:vitest --external:react --external:react-dom --external:tldraw`：通过。
+- `npx esbuild client/agent-events.ts client/components/LocalArtContextMenu.tsx client/components/LocalArtContextMenu.test.tsx client/components/ChatPanel.tsx client/components/ChatPanel.test.tsx client/App.tsx --bundle --platform=node --format=esm --outdir=/tmp/localart-context-menu-build-final --external:vitest --external:react --external:react-dom --external:tldraw`：通过。
+- `git diff --check`：通过。
