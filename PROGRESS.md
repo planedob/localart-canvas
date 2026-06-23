@@ -275,3 +275,25 @@ CI 打包态真实闭环复测（2026-06-23）：
 本机验证限制：
 
 - 本机 `npm run typecheck` 仍在 TypeScript 阶段静默挂起，已中止；以 GitHub CI / Desktop package 为完整验证依据。
+
+### M2 历史版本回溯 · 后端基础（2026-06-24）
+
+已完成：
+
+- `CanvasStore.write()` 在覆盖当前 `document.json` 前自动保存旧文档到 `canvas/versions/`。
+- 首次写入不创建历史；重复写入同一内容不创建重复历史。
+- 新增 `CanvasStore.listVersions()`、`readVersion(id)`、`restoreVersion(id)`。
+- 新增 `GET /api/canvas/versions`，返回版本列表。
+- 新增 `POST /api/canvas/versions/:id/restore`，把指定版本恢复为当前画布文档。
+- 新增存储层和 API 测试，覆盖快照、列表、恢复和重复写入。
+
+验证记录：
+
+- `npx esbuild server/storage/CanvasStore.ts server/storage/CanvasStore.test.ts server/app.ts server/app.test.ts --bundle --platform=node --format=esm --outdir=/tmp/localart-history-build --external:vitest --external:supertest`：通过。
+- `npx tsx -e "... CanvasStore history smoke ..."`：通过，确认创建 1 个版本并恢复旧文档。
+- GitHub CI `28049065705` 通过：`npm run build` 完成。
+- GitHub Desktop package `28049064873` 通过：macOS、Ubuntu、Windows 均完成 `npm test`、`npm run build`、`npm run make` 与 artifact 上传。
+
+未完成：
+
+- 前端历史列表/恢复 UI 尚未接入；当前能力可通过本地 API 使用。
