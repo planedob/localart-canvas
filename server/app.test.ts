@@ -1,4 +1,5 @@
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { IncomingMessage } from 'node:http'
 import os from 'node:os'
 import path from 'node:path'
 import request from 'supertest'
@@ -17,6 +18,16 @@ const config: RuntimeConfig = {
 	comfyuiPromptNodeId: '6',
 	canvasDirectory: '/tmp/canvas',
 	modelConfigDirectory: '/tmp/model-config',
+}
+
+function parseBinaryResponse(
+	response: IncomingMessage,
+	callback: (error: Error | null, body?: Buffer) => void
+): void {
+	const chunks: Buffer[] = []
+	response.on('data', (chunk: Buffer | string) => chunks.push(Buffer.from(chunk)))
+	response.on('end', () => callback(null, Buffer.concat(chunks)))
+	response.on('error', (error: Error) => callback(error))
 }
 
 describe('GET /api/health', () => {
@@ -181,7 +192,10 @@ describe('canvas export API', () => {
 				{ canvasStore }
 			)
 
-			const response = await request(app).get('/api/export/canvas.zip')
+			const response = await request(app)
+				.get('/api/export/canvas.zip')
+				.buffer(true)
+				.parse(parseBinaryResponse)
 
 			expect(response.status).toBe(200)
 			expect(response.headers['content-type']).toContain('application/zip')
