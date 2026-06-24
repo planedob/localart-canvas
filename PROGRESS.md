@@ -428,3 +428,4 @@ CI 打包态真实闭环复测（2026-06-23）：
 - `npx vitest run scripts/release-preflight.test.mjs --config vitest.config.ts`：通过，1 个测试文件、8 条测试。
 - `npm run release:preflight`：通过，无 blocking failures；仅提示当前工作区编辑文件和未跟踪 `.DS_Store`。
 - `npx esbuild scripts/release-preflight.mjs --bundle --platform=node --format=esm --outfile=/tmp/localart-release-preflight.mjs`：通过。
+- GitHub Desktop package `28111235014` 首次运行时 Windows job 在 `scripts/release-preflight.test.mjs` 报 `SyntaxError: Invalid or unexpected token`；已将脚本和测试源码改为 ASCII-only，保留运行时中文路径值。

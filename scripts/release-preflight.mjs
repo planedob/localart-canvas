@@ -7,8 +7,8 @@ import path from 'node:path'
 export const REQUIRED_FILES = [
 	'README.md',
 	'PROGRESS.md',
-	'docs/M2-验收签收-Claude.md',
-	'docs/M2-剩余人工验收清单.md',
+	'docs/M2-\u9a8c\u6536\u7b7e\u6536-Claude.md',
+	'docs/M2-\u5269\u4f59\u4eba\u5de5\u9a8c\u6536\u6e05\u5355.md',
 	'docs/release/README.md',
 	'docs/release/P0-checklist.md',
 	'docs/release/github-release-draft.md',
@@ -156,7 +156,7 @@ export function formatReport(report) {
 	const passingCount = report.checks.filter((check) => check.level === 'pass').length
 	lines.push(`PASSING CHECKS: ${passingCount}`)
 	for (const check of report.checks.filter((item) => item.level === 'pass')) {
-		lines.push(`  ✓ ${check.message}`)
+		lines.push(`  OK ${check.message}`)
 	}
 	if (report.warnings.length > 0) {
 		lines.push('', `WARNINGS: ${report.warnings.length}`)
@@ -167,7 +167,7 @@ export function formatReport(report) {
 	if (report.failures.length > 0) {
 		lines.push('', `FAILURES: ${report.failures.length}`)
 		for (const failure of report.failures) {
-			lines.push(`  ✗ ${failure}`)
+			lines.push(`  FAIL ${failure}`)
 		}
 	}
 	if (report.failures.length === 0) {

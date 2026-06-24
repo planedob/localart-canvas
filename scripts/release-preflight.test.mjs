@@ -6,12 +6,15 @@ import {
 	parseGitStatus,
 } from './release-preflight.mjs'
 
+const SIGNOFF_DOC = 'docs/M2-\u9a8c\u6536\u7b7e\u6536-Claude.md'
+const MANUAL_CHECKLIST_DOC = 'docs/M2-\u5269\u4f59\u4eba\u5de5\u9a8c\u6536\u6e05\u5355.md'
+
 const baseState = {
 	existingFiles: new Set([
 		'README.md',
 		'PROGRESS.md',
-		'docs/M2-验收签收-Claude.md',
-		'docs/M2-剩余人工验收清单.md',
+		SIGNOFF_DOC,
+		MANUAL_CHECKLIST_DOC,
 		'docs/release/README.md',
 		'docs/release/P0-checklist.md',
 		'docs/release/github-release-draft.md',
@@ -22,7 +25,7 @@ const baseState = {
 	trackedFiles: [
 		'README.md',
 		'PROGRESS.md',
-		'docs/M2-验收签收-Claude.md',
+		SIGNOFF_DOC,
 	],
 	statusEntries: [],
 }
