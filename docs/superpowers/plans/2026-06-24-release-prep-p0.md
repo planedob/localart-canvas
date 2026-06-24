@@ -14,7 +14,7 @@
 
 **Files:**
 - Create: `scripts/release-preflight.mjs`
-- Create: `scripts/release-preflight.test.mjs`
+- Create: `scripts/release-preflight.test.ts`
 - Modify: `vitest.config.ts`
 
 - [ ] **Step 1: Write failing tests**
@@ -26,10 +26,10 @@ Create tests that import `buildPreflightReport`, `formatReport`, and `hasSecretL
 Run:
 
 ```bash
-npx vitest run scripts/release-preflight.test.mjs --config vitest.config.ts
+npx vitest run scripts/release-preflight.test.ts --config vitest.config.ts
 ```
 
-Expected: fail because `scripts/**/*.test.mjs` is not included or because `scripts/release-preflight.mjs` does not exist.
+Expected: fail because `scripts/**/*.test.ts` is not included or because `scripts/release-preflight.mjs` does not exist.
 
 - [ ] **Step 3: Implement checker**
 
@@ -46,7 +46,7 @@ Add a read-only checker that:
 Run:
 
 ```bash
-npx vitest run scripts/release-preflight.test.mjs --config vitest.config.ts
+npx vitest run scripts/release-preflight.test.ts --config vitest.config.ts
 ```
 
 Expected: tests pass.
@@ -110,7 +110,7 @@ Record the release prep P0 work and verification commands in `PROGRESS.md`.
 - [ ] **Step 1: Run focused tests**
 
 ```bash
-npx vitest run scripts/release-preflight.test.mjs --config vitest.config.ts
+npx vitest run scripts/release-preflight.test.ts --config vitest.config.ts
 ```
 
 - [ ] **Step 2: Run preflight**
@@ -128,6 +128,6 @@ npx esbuild scripts/release-preflight.mjs --bundle --platform=node --format=esm 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add package.json vitest.config.ts scripts/release-preflight.mjs scripts/release-preflight.test.mjs docs/release README.md PROGRESS.md docs/superpowers/specs/2026-06-24-release-prep-p0-design.md docs/superpowers/plans/2026-06-24-release-prep-p0.md
+git add package.json vitest.config.ts scripts/release-preflight.mjs scripts/release-preflight.test.ts docs/release README.md PROGRESS.md docs/superpowers/specs/2026-06-24-release-prep-p0-design.md docs/superpowers/plans/2026-06-24-release-prep-p0.md
 git commit -m "docs: add release preparation preflight"
 ```

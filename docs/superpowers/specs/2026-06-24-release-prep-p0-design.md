@@ -23,8 +23,8 @@ The script can optionally call `gh run view` for run IDs passed through CLI flag
 ## Files
 
 - `scripts/release-preflight.mjs`: read-only release readiness checker.
-- `scripts/release-preflight.test.mjs`: unit tests for checker logic.
-- `vitest.config.ts`: include `scripts/**/*.test.mjs`.
+- `scripts/release-preflight.test.ts`: unit tests for checker logic.
+- `vitest.config.ts`: include `scripts/**/*.test.ts`.
 - `docs/release/README.md`: release preparation index.
 - `docs/release/P0-checklist.md`: publish-prep checklist.
 - `docs/release/github-release-draft.md`: copyable release notes draft.
