@@ -107,7 +107,7 @@ export class ComfyUIClient {
 		promptNodeId,
 		fetchImplementation = fetch,
 		pollIntervalMs = 500,
-		maxPollAttempts = 240,
+		maxPollAttempts = 1200,
 	}: ComfyUIClientOptions) {
 		this.baseUrl = baseUrl.replace(/\/+$/, '')
 		this.workflow = workflow

@@ -162,4 +162,43 @@ describe('ComfyUIClient.generate', () => {
 			imageBytes,
 		})
 	})
+
+	it('allows slow local workflows to run for up to ten minutes by default', async () => {
+		const imageBytes = new Uint8Array([6, 5, 4])
+		const fetchImplementation = vi
+			.fn()
+			.mockResolvedValueOnce(jsonResponse({ prompt_id: 'slow-prompt' }))
+		for (let index = 0; index < 1199; index++) {
+			fetchImplementation.mockResolvedValueOnce(jsonResponse({}))
+		}
+		fetchImplementation
+			.mockResolvedValueOnce(
+				jsonResponse({
+					'slow-prompt': {
+						outputs: {
+							'9': { images: [{ filename: 'slow.png', type: 'output' }] },
+						},
+					},
+				})
+			)
+			.mockResolvedValueOnce(
+				new Response(imageBytes, {
+					status: 200,
+					headers: { 'Content-Type': 'image/png' },
+				})
+			)
+		const client = new ComfyUIClient({
+			baseUrl: 'http://comfy.test',
+			workflow,
+			promptNodeId: '6',
+			fetchImplementation,
+			pollIntervalMs: 0,
+		})
+
+		await expect(client.generate('slow local workflow')).resolves.toMatchObject({
+			promptId: 'slow-prompt',
+			filename: 'slow.png',
+			imageBytes,
+		})
+	})
 })
