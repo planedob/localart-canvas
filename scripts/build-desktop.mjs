@@ -15,3 +15,5 @@ await build({
 	external: ['electron'],
 	sourcemap: true,
 })
+
+process.exit(0)
