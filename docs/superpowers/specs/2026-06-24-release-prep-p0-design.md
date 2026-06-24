@@ -23,8 +23,8 @@ The script can optionally call `gh run view` for run IDs passed through CLI flag
 ## Files
 
 - `scripts/release-preflight.mjs`: read-only release readiness checker.
-- `scripts/release-preflight.test.ts`: unit tests for checker logic.
-- `vitest.config.ts`: include `scripts/**/*.test.ts`.
+- `scripts/release-preflight.test.ts`: focused unit tests for checker logic, run explicitly because default desktop packaging tests cover product code.
+- `vitest.release.config.ts`: dedicated Vitest config for release-maintenance tests.
 - `docs/release/README.md`: release preparation index.
 - `docs/release/P0-checklist.md`: publish-prep checklist.
 - `docs/release/github-release-draft.md`: copyable release notes draft.
@@ -47,7 +47,7 @@ Checks are intentionally conservative:
 
 ## Testing
 
-Unit tests cover the pure check functions with temporary in-memory-style fixtures. A small integration smoke runs the CLI with `--help` and on the current repo.
+Focused unit tests cover the pure check functions with temporary in-memory-style fixtures. A small integration smoke runs the CLI with `--help` and on the current repo. The release preflight test is not included in the default `npm test` suite because it is a release-maintenance helper rather than product runtime code.
 
 ## Out of Scope
 

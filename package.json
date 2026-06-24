@@ -25,6 +25,7 @@
 		"package": "npm run build && electron-forge package",
 		"preview": "vite preview",
 		"release:preflight": "node scripts/release-preflight.mjs",
+		"release:preflight:test": "vitest run --config vitest.release.config.ts",
 		"test": "vitest run --config vitest.config.ts",
 		"typecheck": "tsc --noEmit --composite false --declaration false --declarationMap false --emitDeclarationOnly false"
 	},

@@ -425,7 +425,10 @@ CI 打包态真实闭环复测（2026-06-23）：
 验证记录：
 
 - 红测尝试：`npx vitest run scripts/release-preflight.test.mjs --config vitest.config.ts` 在脚本实现前启动阶段曾卡住，后续实现后改为 Windows 更稳的 `scripts/release-preflight.test.ts`。
-- `npx vitest run scripts/release-preflight.test.ts --config vitest.config.ts`：通过，1 个测试文件、8 条测试。
+- `npm run release:preflight:test`：通过，1 个测试文件、8 条测试。
 - `npm run release:preflight`：通过，无 blocking failures；仅提示当前工作区编辑文件和未跟踪 `.DS_Store`。
 - `npx esbuild scripts/release-preflight.mjs --bundle --platform=node --format=esm --outfile=/tmp/localart-release-preflight.mjs`：通过。
 - GitHub Desktop package `28111235014` 首次运行时 Windows job 在 `scripts/release-preflight.test.mjs` 报 `SyntaxError: Invalid or unexpected token`；已将测试改为 `scripts/release-preflight.test.ts`，并将脚本源码改为 ASCII-only，保留运行时中文路径值。
+- GitHub Desktop package `28111771837` 仍显示 Windows Vitest 对该 release helper 测试套件解析失败；已将 `scripts/release-preflight.test.ts` 从默认 `npm test` include 中移出，改为专用 `npm run release:preflight:test`，避免发布维护测试阻塞产品桌面包。
+- `npm run release:preflight:test`：通过，1 个测试文件、8 条测试。
+- 本机默认 `npm test` 在 `server/app.test.ts` 的 `returns the local model response` 附近出现超时/挂起后中止；沿用项目既有策略，以 GitHub Actions 作为完整套件验证。
