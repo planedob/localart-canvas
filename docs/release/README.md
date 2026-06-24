@@ -7,8 +7,8 @@ M2 已通过 Claude 阶段验收。这个目录用于后续公开发布准备，
 - 最新 M2 归档提交：`b8d4f0b docs: archive m2 claude signoff`
 - M2 tag：`m2-done`
 - Claude 签收：`docs/M2-验收签收-Claude.md`
-- 最新 CI：`28088650326`，通过
-- 最新 Desktop package：`28088650313`，macOS / Windows / Ubuntu 全通过
+- 最新 CI：`28112214622`，通过
+- 最新 Desktop package：`28112214466`，macOS / Windows / Ubuntu 全通过
 
 ## 发布前先跑
 
