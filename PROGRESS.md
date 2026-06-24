@@ -385,3 +385,22 @@ CI 打包态真实闭环复测（2026-06-23）：
 
 - `docs/validation-evidence-clean/` 已加入 `.git/info/exclude`，不会提交到仓库；验收时从本机 zip 包发送给 Claude。
 - 旧目录 `docs/validation-evidence/` 可能包含私人聊天画面，不要发送。
+
+### M2 Claude 签收归档（2026-06-24）
+
+已完成：
+
+- 根据 Claude 最终签收结论新增 `docs/M2-验收签收-Claude.md`。
+- README 已更新为“M2 已完成并通过 Claude 阶段验收”。
+- M2 handoff 已刷新到最新提交与最新 GitHub Actions run。
+
+签收结论：
+
+- M2 代码 + M1 Electron 开发态闭环：通过。
+- M2 桌面交付：完整通过。
+- M2 到此结束。
+
+最新自动化记录：
+
+- GitHub CI `28088650326` 通过。
+- GitHub Desktop package `28088650313` 通过，macOS、Windows、Ubuntu 三平台均完成 `npm ci`、`npm test`、`npm run build`、`npm run make` 与 artifact 上传。
