@@ -360,3 +360,28 @@ CI 打包态真实闭环复测（2026-06-23）：
 - `git diff --check`：通过。
 - GitHub CI `28052623253` 通过：`npm run build` 完成。
 - GitHub Desktop package `28052623447` 通过：macOS、Ubuntu、Windows 均完成 `npm test`、`npm run build`、`npm run make` 与 artifact 上传。
+
+### M2 验收补证 · ComfyUI 长耗时修复与干净素材（2026-06-24）
+
+已完成：
+
+- 修复 Electron 包内 ComfyUI 生成等待过短的问题：默认轮询从 240 次 × 500ms（约 2 分钟）提高到 1200 次 × 500ms（约 10 分钟）。
+- 新增 `ComfyUIClient` 慢速本地 workflow 测试，覆盖默认 10 分钟等待窗口。
+- 重新从 GitHub Actions 下载最新 macOS artifact，并用真实 Electron 包完成 M1 闭环验收演示。
+- 生成一组不含私人聊天窗口的干净验收素材，保存在本机未跟踪目录 `docs/validation-evidence-clean/`：
+  - `01-new-package-m1-loop-fixed.mov`：最新 macOS 包内，选中画布对象后触发 ComfyUI 生成，新图落到画布，状态从 `Generating…` 回到可操作。
+  - `02-fallback-primary-unreachable.mov`：Primary 改为不可达 `http://127.0.0.1:9` 后自动切到 Backup Ollama，并显示可读 fallback 原因。
+  - `03-services-live-after-quit.png` / `.txt`：退出 Electron 后，`curl` 证明 Ollama 与 ComfyUI 仍存活，`pgrep` 不再显示 localart-canvas。
+  - `04-restart-canvas-restore.mov` / `.png`：重启 Electron 后，画布从 `/Users/dc/Library/Application Support/localart-canvas/canvas` 恢复，状态显示 `tool.ai-image-holder. 5 of 5`。
+- fallback 测试完成后已把本机路由配置恢复为 Primary Ollama `http://127.0.0.1:11434`，Backup 关闭。
+
+验证记录：
+
+- 本机 focused Vitest 仍存在启动后不输出/挂起现象，已中止；以 GitHub Actions 作为权威自动验证。
+- GitHub CI `28087574810` 通过：`npm run build` 完成。
+- GitHub Desktop package `28087574820` 通过：macOS、Ubuntu、Windows 均完成 `npm ci`、`npm test`、`npm run build`、`npm run make` 与 artifact 上传。
+
+注意：
+
+- `docs/validation-evidence-clean/` 已加入 `.git/info/exclude`，不会提交到仓库；验收时从本机 zip 包发送给 Claude。
+- 旧目录 `docs/validation-evidence/` 可能包含私人聊天画面，不要发送。
