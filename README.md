@@ -50,6 +50,14 @@ npm run make
 
 产物位于 `out/`。macOS 生成未签名 `.app` 和 ZIP；Windows 生成 Squirrel 安装包；Linux 生成 DEB 与 ZIP。Windows/Linux 当前只通过 CI 打包，GUI、路径与本地模型连接尚未实机验证。
 
+发布准备预检：
+
+```bash
+npm run release:preflight
+```
+
+预检只读取本地仓库状态，检查 M2 签收文档、release 文档、里程碑 tag 和不应跟踪的本地/密钥路径。它不会发布、签名、公证、修改 GitHub 仓库设置或读取密钥文件内容。公开发布说明见 [`docs/release/README.md`](docs/release/README.md)。
+
 打包后的画布默认存到 Electron `userData/canvas`，实际路径显示在右侧“服务状态”。开发模式仍使用仓库 `./canvas/`，不会自动迁移旧数据。可用 `LOCALART_CANVAS_DIR` 指向绝对路径或相对当前项目的路径。
 
 macOS 未签名应用优先在 Finder 中右键应用并选择“打开”。开发测试需要清除隔离属性时执行：
@@ -165,5 +173,6 @@ tldraw SDK 可在开发环境使用；生产部署需要有效的 trial、commer
 - [`docs/M2S1-验收交接.md`](docs/M2S1-验收交接.md)：Electron 壳验收清单、录屏步骤与 CI 证据
 - [`docs/M2-验收签收-Claude.md`](docs/M2-验收签收-Claude.md)：Claude 对 M2 阶段的签收结论
 - [`docs/M2-剩余人工验收清单.md`](docs/M2-剩余人工验收清单.md)：云模型 key、Windows/Linux GUI、签名和发布等人工项
+- [`docs/release/README.md`](docs/release/README.md)：M2 后公开发布准备入口、预检命令和发布资料索引
 - [`docs/HANDOFF-M2-给接手AI.md`](docs/HANDOFF-M2-给接手AI.md)：当前完成度、剩余阻塞项和接手 AI 操作说明
 - [`docs/superpowers/specs/2026-06-23-model-provider-design.md`](docs/superpowers/specs/2026-06-23-model-provider-design.md)：统一模型 Provider 与主备路由设计

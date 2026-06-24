@@ -404,3 +404,27 @@ CI 打包态真实闭环复测（2026-06-23）：
 
 - GitHub CI `28088650326` 通过。
 - GitHub Desktop package `28088650313` 通过，macOS、Windows、Ubuntu 三平台均完成 `npm ci`、`npm test`、`npm run build`、`npm run make` 与 artifact 上传。
+
+### 发布准备 P0 · 只读预检与资料包（2026-06-24）
+
+已完成：
+
+- 新增发布准备设计文档：`docs/superpowers/specs/2026-06-24-release-prep-p0-design.md`。
+- 新增实施计划：`docs/superpowers/plans/2026-06-24-release-prep-p0.md`。
+- 新增 `docs/release/` 发布资料包：
+  - `README.md`
+  - `P0-checklist.md`
+  - `github-release-draft.md`
+  - `manual-qa.md`
+  - `rollback.md`
+- 新增只读发布预检脚本 `scripts/release-preflight.mjs`。
+- 新增 `npm run release:preflight`。
+- 预检脚本检查 M2 签收文档、release 文档、里程碑 tag、被跟踪的本地数据目录和密钥样式路径。
+- 预检脚本不会发布、签名、公证、改仓库设置或读取密钥文件内容。
+
+验证记录：
+
+- 红测尝试：`npx vitest run scripts/release-preflight.test.mjs --config vitest.config.ts` 在脚本实现前启动阶段曾卡住，后续实现后重新运行。
+- `npx vitest run scripts/release-preflight.test.mjs --config vitest.config.ts`：通过，1 个测试文件、8 条测试。
+- `npm run release:preflight`：通过，无 blocking failures；仅提示当前工作区编辑文件和未跟踪 `.DS_Store`。
+- `npx esbuild scripts/release-preflight.mjs --bundle --platform=node --format=esm --outfile=/tmp/localart-release-preflight.mjs`：通过。

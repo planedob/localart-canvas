@@ -7,6 +7,7 @@ export default defineConfig({
 			'client/**/*.test.tsx',
 			'desktop/**/*.test.ts',
 			'server/**/*.test.ts',
+			'scripts/**/*.test.mjs',
 		],
 	},
 })
