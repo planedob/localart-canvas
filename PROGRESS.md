@@ -434,3 +434,18 @@ CI 打包态真实闭环复测（2026-06-23）：
 - 本机默认 `npm test` 在 `server/app.test.ts` 的 `returns the local model response` 附近出现超时/挂起后中止；沿用项目既有策略，以 GitHub Actions 作为完整套件验证。
 - GitHub CI `28112214622` 通过。
 - GitHub Desktop package `28112214466` 通过：macOS、Ubuntu、Windows 均完成 `npm ci`、`npm test`、`npm run build`、`npm run make` 与 artifact 上传。
+
+### 首版发布基建 · v0.1.0 草稿发布准备（2026-06-25）
+
+已完成：
+
+- 将 npm 包版本从 `0.0.0` 升到 `0.1.0`。
+- 新增 `.github/workflows/release.yml`：`v*` tag 触发三平台打包，生成 `SHA256SUMS-*.txt`，并创建/更新 GitHub draft Release。
+- 更新 `docs/release/github-release-draft.md`，首版 tag 改为 `v0.1.0`。
+- 本轮不集成 `desktop/update-check.ts`，留给后续独立 PR 与复审。
+
+待执行：
+
+- 本地自检通过后，提交发布基建并推送 `v0.1.0` tag。
+- 等 Release workflow 完成后，回报 draft Release 链接与三平台产物/校验文件状态。
+- 不点 Publish，由 Eric 复核后决定发布。

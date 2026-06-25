@@ -9,6 +9,8 @@ M2 已通过 Claude 阶段验收。这个目录用于后续公开发布准备，
 - Claude 签收：`docs/M2-验收签收-Claude.md`
 - 最新 CI：`28112214622`，通过
 - 最新 Desktop package：`28112214466`，macOS / Windows / Ubuntu 全通过
+- 首版发布 tag：`v0.1.0`
+- Release workflow：`.github/workflows/release.yml`，tag 触发后创建 draft Release，不自动发布
 
 ## 发布前先跑
 
@@ -17,6 +19,15 @@ npm run release:preflight
 ```
 
 这个命令只做本地只读检查，不发布、不签名、不公证、不改仓库设置、不读取密钥文件内容。
+
+发首版草稿：
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+Release workflow 会打包 macOS / Windows / Linux，生成 `SHA256SUMS-*.txt`，并创建 GitHub draft Release。人工复核前不要点 Publish。
 
 ## 文档索引
 

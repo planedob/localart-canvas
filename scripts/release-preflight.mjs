@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { existsSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
@@ -28,6 +28,16 @@ const LOCAL_ONLY_PREFIXES = [
 ]
 
 const SECRET_PATH_PATTERN = /(^|[/._-])(secret|secrets|token|tokens|api[-_]?key|apikey|credential|credentials|private[-_]?key)([/._-]|$)/i
+const SCAN_SKIP_DIRS = new Set([
+	'.git',
+	'node_modules',
+	'out',
+	'dist',
+	'.desktop',
+	'canvas',
+	'.localart',
+	'.vite',
+])
 
 export function hasSecretLikePath(filePath) {
 	return SECRET_PATH_PATTERN.test(filePath)
@@ -140,13 +150,62 @@ function runGit(args, cwd) {
 		cwd,
 		encoding: 'utf8',
 		stdio: ['ignore', 'pipe', 'pipe'],
+		timeout: 10_000,
 	}).trim()
+}
+
+function readLooseTags(cwd) {
+	const tagsDir = path.join(cwd, '.git', 'refs', 'tags')
+	if (!existsSync(tagsDir)) return []
+	return readdirSync(tagsDir, { withFileTypes: true })
+		.filter((entry) => entry.isFile())
+		.map((entry) => entry.name)
+}
+
+function readPackedTags(cwd) {
+	const packedRefsPath = path.join(cwd, '.git', 'packed-refs')
+	if (!existsSync(packedRefsPath)) return []
+	return readFileSync(packedRefsPath, 'utf8')
+		.split('\n')
+		.map((line) => line.trim())
+		.filter((line) => line && !line.startsWith('#') && !line.startsWith('^'))
+		.map((line) => line.split(' ')[1])
+		.filter((ref) => ref?.startsWith('refs/tags/'))
+		.map((ref) => ref.replace('refs/tags/', ''))
+}
+
+function readTags(cwd) {
+	return [...new Set([...readLooseTags(cwd), ...readPackedTags(cwd)])].sort()
+}
+
+function scanLocalStatusEntries(cwd, trackedFiles) {
+	const tracked = new Set(trackedFiles)
+	const entries = []
+
+	function visit(relativeDir) {
+		const absoluteDir = path.join(cwd, relativeDir)
+		for (const entry of readdirSync(absoluteDir, { withFileTypes: true })) {
+			const relativePath = path.posix.join(relativeDir.split(path.sep).join(path.posix.sep), entry.name)
+			if (entry.isDirectory()) {
+				if (!SCAN_SKIP_DIRS.has(entry.name)) visit(relativePath)
+				continue
+			}
+			if (!entry.isFile()) continue
+			if (tracked.has(relativePath)) continue
+			if (entry.name === '.DS_Store' || hasSecretLikePath(relativePath)) {
+				entries.push({ code: '??', path: relativePath })
+			}
+		}
+	}
+
+	visit('')
+	return entries
 }
 
 function readRepoState(cwd) {
 	const trackedFiles = runGit(['ls-files'], cwd).split('\n').filter(Boolean)
-	const tags = runGit(['tag', '--list'], cwd).split('\n').filter(Boolean)
-	const statusEntries = parseGitStatus(runGit(['status', '--short'], cwd))
+	const tags = readTags(cwd)
+	const statusEntries = scanLocalStatusEntries(cwd, trackedFiles)
 	const existingFiles = new Set(REQUIRED_FILES.filter((filePath) => existsSync(path.join(cwd, filePath))))
 	return { existingFiles, tags, trackedFiles, statusEntries }
 }

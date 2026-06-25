@@ -1,0 +1,129 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to package, for example v0.1.0'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    name: Package (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            artifact: localart-canvas-macos
+            checksum: SHA256SUMS-macos.txt
+          - os: windows-latest
+            artifact: localart-canvas-windows
+            checksum: SHA256SUMS-windows.txt
+          - os: ubuntu-latest
+            artifact: localart-canvas-linux
+            checksum: SHA256SUMS-linux.txt
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run release:preflight
+      - run: npm run release:preflight:test
+      - run: npm test
+      - run: npm run build
+      - run: npm run make
+
+      - name: Generate checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const { createHash } = require('node:crypto')
+          const { readdirSync, readFileSync, writeFileSync } = require('node:fs')
+          const path = require('node:path')
+          const root = path.join(process.cwd(), 'out', 'make')
+          const rows = []
+          function walk(dir) {
+            for (const entry of readdirSync(dir, { withFileTypes: true })) {
+              const absolute = path.join(dir, entry.name)
+              if (entry.isDirectory()) {
+                walk(absolute)
+              } else if (entry.isFile()) {
+                const relative = path.relative(root, absolute).split(path.sep).join('/')
+                const hash = createHash('sha256').update(readFileSync(absolute)).digest('hex')
+                rows.push(`${hash}  ${relative}`)
+              }
+            }
+          }
+          walk(root)
+          rows.sort()
+          writeFileSync('${{ matrix.checksum }}', `${rows.join('\n')}\n`)
+          NODE
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            out/make/**
+            ${{ matrix.checksum }}
+          if-no-files-found: error
+
+  draft-release:
+    name: Draft GitHub Release
+    runs-on: ubuntu-latest
+    needs: package
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+
+      - name: Flatten release assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release-upload
+          find release-assets -type f -print0 | while IFS= read -r -d '' file; do
+            artifact="$(basename "$(dirname "$file")")"
+            name="$(basename "$file")"
+            if [[ "$name" == SHA256SUMS-* ]]; then
+              cp "$file" "release-upload/$name"
+            else
+              cp "$file" "release-upload/${artifact}-${name}"
+            fi
+          done
+          find release-upload -type f -maxdepth 1 -print | sort
+
+      - name: Create or update draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          title="LocalArt Canvas ${TAG_NAME} M2 Preview"
+          notes="docs/release/github-release-draft.md"
+          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            gh release edit "$TAG_NAME" --draft=true --title "$title" --notes-file "$notes"
+          else
+            gh release create "$TAG_NAME" --draft --title "$title" --notes-file "$notes"
+          fi
+          find release-upload -type f -maxdepth 1 -print0 | xargs -0 gh release upload "$TAG_NAME" --clobber

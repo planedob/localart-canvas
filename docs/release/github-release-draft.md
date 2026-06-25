@@ -2,11 +2,11 @@
 
 ## Title
 
-LocalArt Canvas M2 Preview
+LocalArt Canvas v0.1.0 M2 Preview
 
 ## Tag
 
-`m2-done`
+`v0.1.0`
 
 ## Summary
 
@@ -29,8 +29,8 @@ LocalArt Canvas is a local-first AI visual canvas built on tldraw, Ollama, and C
 ## Validation
 
 - Claude M2 signoff: `docs/M2-验收签收-Claude.md`
-- CI: `28088650326`
-- Desktop package: `28088650313`
+- CI: `28112571800`
+- Desktop package: `28112571712`
 - Clean local evidence package: `docs/validation-evidence-clean/localart-m2-clean-validation-evidence.zip` on the maintainer machine
 
 ## Known limitations
