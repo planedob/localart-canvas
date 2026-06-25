@@ -15,9 +15,27 @@ permissions:
   contents: write
 
 jobs:
+  release-checks:
+    name: Release checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run release:preflight
+      - run: npm run release:preflight:test
+
   package:
     name: Package (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    needs: release-checks
     strategy:
       fail-fast: false
       matrix:
@@ -43,7 +61,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run release:preflight
-      - run: npm run release:preflight:test
       - run: npm test
       - run: npm run build
       - run: npm run make
